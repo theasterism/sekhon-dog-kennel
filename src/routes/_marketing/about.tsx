@@ -20,7 +20,7 @@ function RouteComponent() {
 
         <div className="flex flex-col gap-10">
           <div className="flex flex-col gap-4">
-            <h2 className="text-lg font-semibold uppercase tracking-wider">Our Story</h2>
+            <h2 className="text-lg font-semibold tracking-wider">Our Story</h2>
             <p className="text-base text-muted-foreground leading-relaxed max-w-[72ch] w-full">
               Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem
               placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor.
@@ -30,7 +30,7 @@ function RouteComponent() {
             </p>
           </div>
           <div className="flex flex-col gap-4">
-            <h2 className="text-lg font-semibold uppercase tracking-wider">Our Purpose</h2>
+            <h2 className="text-lg font-semibold tracking-wider">Our Purpose</h2>
             <p className="text-base text-muted-foreground leading-relaxed max-w-[72ch] w-full">
               Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem
               placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor.

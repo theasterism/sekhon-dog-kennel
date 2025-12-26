@@ -84,9 +84,11 @@ export function MarketingFooter() {
               <a href={`tel:${contact.phone}`} className="block hover:text-foreground transition-colors">
                 {contact.phoneDisplay}
               </a>
-              <a href={`mailto:${contact.email}`} className="block hover:text-foreground transition-colors">
-                {contact.email}
-              </a>
+              {contact.email && (
+                <a href={`mailto:${contact.email}`} className="block hover:text-foreground transition-colors">
+                  {contact.email}
+                </a>
+              )}
               <Link to="/contact" className="block hover:text-foreground transition-colors font-medium">
                 Contact Page →
               </Link>
