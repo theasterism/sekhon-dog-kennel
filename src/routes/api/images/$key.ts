@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 import { createFileRoute } from "@tanstack/react-router";
-import { apiErrorResponse, ERROR_CODES } from "@/server/errors";
+import { apiError, apiErrorResponse, ERROR_CODES } from "@/server/errors";
 
 export const Route = createFileRoute("/api/images/$key")({
   server: {
@@ -9,13 +9,13 @@ export const Route = createFileRoute("/api/images/$key")({
         const key = params.key;
 
         if (!key) {
-          return apiErrorResponse(ERROR_CODES.NOT_FOUND, 404, "Image key is required.");
+          return apiErrorResponse(apiError(ERROR_CODES.NOT_FOUND, 404, "Image key is required."));
         }
 
         const object = await env.BUCKET.get(key);
 
         if (!object) {
-          return apiErrorResponse(ERROR_CODES.NOT_FOUND, 404, "Image not found.");
+          return apiErrorResponse(apiError(ERROR_CODES.IMAGE_NOT_FOUND, 404));
         }
 
         const headers = new Headers();
