@@ -3,7 +3,7 @@ import { siteConfig } from "@/config/site";
 
 const footerLinks = [
   { href: "/", label: "Home", isRoute: true },
-  { href: "#available-dogs", label: "Available Dogs", isRoute: false },
+  { href: "/dogs", label: "Available Dogs", isRoute: true },
   { href: "/about", label: "About Us", isRoute: true },
 ] as const;
 

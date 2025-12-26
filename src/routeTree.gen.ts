@@ -18,6 +18,7 @@ import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as MarketingContactRouteImport } from './routes/_marketing/contact'
 import { Route as MarketingApplicationRouteImport } from './routes/_marketing/application'
 import { Route as MarketingAboutRouteImport } from './routes/_marketing/about'
+import { Route as MarketingDogsIndexRouteImport } from './routes/_marketing/dogs/index'
 import { Route as ApiRpcSplatRouteImport } from './routes/api/rpc.$'
 import { Route as ApiImagesKeyRouteImport } from './routes/api/images/$key'
 import { Route as ApiAuthSetupRouteImport } from './routes/api/auth/setup'
@@ -69,6 +70,11 @@ const MarketingAboutRoute = MarketingAboutRouteImport.update({
   path: '/about',
   getParentRoute: () => MarketingRouteRoute,
 } as any)
+const MarketingDogsIndexRoute = MarketingDogsIndexRouteImport.update({
+  id: '/dogs/',
+  path: '/dogs/',
+  getParentRoute: () => MarketingRouteRoute,
+} as any)
 const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
   id: '/api/rpc/$',
   path: '/api/rpc/$',
@@ -115,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/setup': typeof ApiAuthSetupRoute
   '/api/images/$key': typeof ApiImagesKeyRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/dogs': typeof MarketingDogsIndexRoute
 }
 export interface FileRoutesByTo {
   '/about': typeof MarketingAboutRoute
@@ -130,6 +137,7 @@ export interface FileRoutesByTo {
   '/api/auth/setup': typeof ApiAuthSetupRoute
   '/api/images/$key': typeof ApiImagesKeyRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/dogs': typeof MarketingDogsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -148,6 +156,7 @@ export interface FileRoutesById {
   '/api/auth/setup': typeof ApiAuthSetupRoute
   '/api/images/$key': typeof ApiImagesKeyRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/_marketing/dogs/': typeof MarketingDogsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -166,6 +175,7 @@ export interface FileRouteTypes {
     | '/api/auth/setup'
     | '/api/images/$key'
     | '/api/rpc/$'
+    | '/dogs'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/about'
@@ -181,6 +191,7 @@ export interface FileRouteTypes {
     | '/api/auth/setup'
     | '/api/images/$key'
     | '/api/rpc/$'
+    | '/dogs'
   id:
     | '__root__'
     | '/_marketing'
@@ -198,6 +209,7 @@ export interface FileRouteTypes {
     | '/api/auth/setup'
     | '/api/images/$key'
     | '/api/rpc/$'
+    | '/_marketing/dogs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -275,6 +287,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingAboutRouteImport
       parentRoute: typeof MarketingRouteRoute
     }
+    '/_marketing/dogs/': {
+      id: '/_marketing/dogs/'
+      path: '/dogs'
+      fullPath: '/dogs'
+      preLoaderRoute: typeof MarketingDogsIndexRouteImport
+      parentRoute: typeof MarketingRouteRoute
+    }
     '/api/rpc/$': {
       id: '/api/rpc/$'
       path: '/api/rpc/$'
@@ -326,6 +345,7 @@ interface MarketingRouteRouteChildren {
   MarketingContactRoute: typeof MarketingContactRoute
   MarketingIndexRoute: typeof MarketingIndexRoute
   MarketingDogsDogIdRoute: typeof MarketingDogsDogIdRoute
+  MarketingDogsIndexRoute: typeof MarketingDogsIndexRoute
 }
 
 const MarketingRouteRouteChildren: MarketingRouteRouteChildren = {
@@ -334,6 +354,7 @@ const MarketingRouteRouteChildren: MarketingRouteRouteChildren = {
   MarketingContactRoute: MarketingContactRoute,
   MarketingIndexRoute: MarketingIndexRoute,
   MarketingDogsDogIdRoute: MarketingDogsDogIdRoute,
+  MarketingDogsIndexRoute: MarketingDogsIndexRoute,
 }
 
 const MarketingRouteRouteWithChildren = MarketingRouteRoute._addFileChildren(

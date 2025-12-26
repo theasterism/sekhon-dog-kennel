@@ -6,8 +6,7 @@ export const navLinks = [
     label: "Home",
   },
   {
-    to: "/",
-    hash: "available-dogs",
+    to: "/dogs",
     label: "Available Dogs",
   },
   {

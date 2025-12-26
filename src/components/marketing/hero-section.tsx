@@ -20,7 +20,7 @@ export function HeroSection() {
           variant="default"
           size="lg"
           className="w-full xs:w-fit xs:px-6"
-          render={<a href="#available-dogs">Meet Our Puppies</a>}
+          render={<Link to="/dogs">Meet Our Puppies</Link>}
         />
         <Button
           variant="outline"
