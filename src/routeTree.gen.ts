@@ -18,6 +18,7 @@ import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as MarketingApplicationRouteImport } from './routes/_marketing/application'
 import { Route as MarketingAboutRouteImport } from './routes/_marketing/about'
 import { Route as ApiRpcSplatRouteImport } from './routes/api/rpc.$'
+import { Route as ApiImagesKeyRouteImport } from './routes/api/images/$key'
 import { Route as ApiAuthSetupRouteImport } from './routes/api/auth/setup'
 import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
 import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
@@ -67,6 +68,11 @@ const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
   path: '/api/rpc/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiImagesKeyRoute = ApiImagesKeyRouteImport.update({
+  id: '/api/images/$key',
+  path: '/api/images/$key',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSetupRoute = ApiAuthSetupRouteImport.update({
   id: '/api/auth/setup',
   path: '/api/auth/setup',
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/setup': typeof ApiAuthSetupRoute
+  '/api/images/$key': typeof ApiImagesKeyRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
 }
 export interface FileRoutesByTo {
@@ -113,6 +120,7 @@ export interface FileRoutesByTo {
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/setup': typeof ApiAuthSetupRoute
+  '/api/images/$key': typeof ApiImagesKeyRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
 }
 export interface FileRoutesById {
@@ -129,6 +137,7 @@ export interface FileRoutesById {
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/setup': typeof ApiAuthSetupRoute
+  '/api/images/$key': typeof ApiImagesKeyRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
 }
 export interface FileRouteTypes {
@@ -145,6 +154,7 @@ export interface FileRouteTypes {
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/setup'
+    | '/api/images/$key'
     | '/api/rpc/$'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -158,6 +168,7 @@ export interface FileRouteTypes {
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/setup'
+    | '/api/images/$key'
     | '/api/rpc/$'
   id:
     | '__root__'
@@ -173,6 +184,7 @@ export interface FileRouteTypes {
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/setup'
+    | '/api/images/$key'
     | '/api/rpc/$'
   fileRoutesById: FileRoutesById
 }
@@ -182,6 +194,7 @@ export interface RootRouteChildren {
   ApiAuthLoginRoute: typeof ApiAuthLoginRoute
   ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
   ApiAuthSetupRoute: typeof ApiAuthSetupRoute
+  ApiImagesKeyRoute: typeof ApiImagesKeyRoute
   ApiRpcSplatRoute: typeof ApiRpcSplatRoute
 }
 
@@ -248,6 +261,13 @@ declare module '@tanstack/react-router' {
       path: '/api/rpc/$'
       fullPath: '/api/rpc/$'
       preLoaderRoute: typeof ApiRpcSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/images/$key': {
+      id: '/api/images/$key'
+      path: '/api/images/$key'
+      fullPath: '/api/images/$key'
+      preLoaderRoute: typeof ApiImagesKeyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/setup': {
@@ -321,6 +341,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthLoginRoute: ApiAuthLoginRoute,
   ApiAuthLogoutRoute: ApiAuthLogoutRoute,
   ApiAuthSetupRoute: ApiAuthSetupRoute,
+  ApiImagesKeyRoute: ApiImagesKeyRoute,
   ApiRpcSplatRoute: ApiRpcSplatRoute,
 }
 export const routeTree = rootRouteImport
