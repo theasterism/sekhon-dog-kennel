@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/config/site";
 import appCss from "@/styles/globals.css?url";
 import { orpc } from "@/utils/orpc";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -64,15 +65,17 @@ export const Route = createRootRouteWithContext<{
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
-        <Toaster />
-        <Scripts />
-      </body>
-    </html>
+    <ThemeProvider>
+      <html lang="en">
+        <head>
+          <HeadContent />
+        </head>
+        <body>
+          {children}
+          <Toaster />
+          <Scripts />
+        </body>
+      </html>
+    </ThemeProvider>
   );
 }
