@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_marketing/about")({
 function RouteComponent() {
   return (
     <main className="pt-24 flex flex-col gap-10 pb-24 px-5 mx-auto lg:flex-row lg:justify-between max-w-7xl w-full">
-      <div className=" flex flex-col gap-10">
+      <div className="flex flex-col gap-10 lg:w-3/5">
         <div className="flex flex-col gap-6">
           <h1 className="tracking-tight leading-tight text-4xl sm:text-5xl font-semibold text-pretty">About Us</h1>
           <p className="text-base text-muted-foreground leading-relaxed max-w-[72ch] w-full">
@@ -42,7 +42,7 @@ function RouteComponent() {
         </div>
       </div>
 
-      <div className="rounded-xl overflow-hidden aspect-4/5 bg-muted shadow-sm relative border border-border max-w-lg lg:max-w-md w-full h-fit">
+      <div className="rounded-xl overflow-hidden aspect-4/5 bg-muted shadow-sm relative border border-border lg:w-2/5 h-fit">
         <div className="absolute inset-0 bg-cover bg-center bg-[url(https://lh3.googleusercontent.com/aida-public/AB6AXuCGMCls8jnxGVGkdBc_TYvoMJeowf4u1u-QwSsZOCmckxzCxfrsC9UueZNZGQn3VOXgADO7WXpfOikYi8GAWEFX9aES7FK3Q9RgY1tj0hXVr9vhPDbPVro_gDvCYKY8ZHVsUZ_rIopgNhQQWVlk951UQBvudlnlvgN5PSCSB0RPZkZrL39gPIOq4MjmRZdODXQrsAM1qoxRYryzfcZf124ZffCJTVt_K5sXIDBbK1wR_iVLDLq2hAnvm9eRY79xfpZ6CL3FoZCZZVc)]" />
       </div>
     </main>
