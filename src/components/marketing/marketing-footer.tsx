@@ -15,7 +15,7 @@ export function MarketingFooter() {
       <div className="max-w-6xl mx-auto px-5 pt-20 pb-24">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand */}
-          <div className="space-y-4">
+          <div className="flex flex-col gap-5">
             <div className="flex gap-1.5 items-center">
               <svg className="size-6" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -47,7 +47,7 @@ export function MarketingFooter() {
           </div>
 
           {/* Quick Links */}
-          <div className="space-y-4">
+          <div className="flex flex-col gap-5">
             <h3 className="font-semibold">Menu</h3>
             <nav className="flex flex-col gap-2">
               {footerLinks.map((link) =>
@@ -73,7 +73,7 @@ export function MarketingFooter() {
           </div>
 
           {/* Contact */}
-          <div className="space-y-4">
+          <div className="flex flex-col gap-5">
             <h3 className="font-semibold">Contact Us</h3>
             <div className="space-y-2 text-sm text-muted-foreground">
               <p>
