@@ -1,56 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
-const navLinks = [
-  { href: "/", label: "Home", isRoute: true },
-  { href: "#available-dogs", label: "Available Dogs", isRoute: false },
-  { href: "/about", label: "About Us", isRoute: true },
-  { href: "/contact", label: "Contact", isRoute: true },
-] as const;
-
-function MainNav() {
-  return (
-    <>
-      {/* Desktop Nav */}
-      <nav className="hidden md:flex items-center gap-1">
-        {navLinks.map((link) =>
-          link.isRoute ? (
-            <Button key={link.href} variant="ghost" render={<Link to={link.href}>{link.label}</Link>} />
-          ) : (
-            <Button key={link.href} variant="ghost" render={<a href={link.href}>{link.label}</a>} />
-          ),
-        )}
-      </nav>
-
-      {/* Mobile Nav */}
-      <DropdownMenu>
-        <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="md:hidden" />}>
-          <div className="relative size-4">
-            <span className="bg-foreground absolute left-0 block h-0.5 w-4 transition-all duration-100 top-1" />
-            <span className="bg-foreground absolute left-0 block h-0.5 w-4 transition-all duration-100 top-2.5" />
-          </div>
-          <span className="sr-only">Toggle Menu</span>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          {navLinks.map((link) =>
-            link.isRoute ? (
-              <DropdownMenuItem key={link.href} render={<Link to={link.href}>{link.label}</Link>} />
-            ) : (
-              <DropdownMenuItem key={link.href} render={<a href={link.href}>{link.label}</a>} />
-            ),
-          )}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
-  );
-}
+import { DesktopNav } from "./desktop-nav";
+import { MobileNav } from "./mobile-nav";
+import { siteConfig } from "@/config/site";
 
 export function MarketingHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -78,10 +30,12 @@ export function MarketingHeader() {
               fill="currentColor"
             />
           </svg>
-          <h2 className="font-semibold tracking-tight hidden sm:block text-lg">Sekhon Dog Kennel</h2>
+          <h2 className="font-semibold tracking-tight hidden sm:block text-lg">{siteConfig.name}</h2>
         </Link>
-        <MainNav />
+        <DesktopNav />
+        <MobileNav />
       </div>
     </header>
   );
 }
+

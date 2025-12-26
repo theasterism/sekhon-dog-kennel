@@ -8,10 +8,11 @@ export function AvailableDogsSection() {
       <h2 className="text-3xl font-semibold text-center mb-10">Available Dogs</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {availableDogs.map((dog) => (
-          <Link key={dog.id} to="/dogs/$dogId" params={{ dogId: dog.id }} className="flex flex-col gap-3 group">
+          <Link key={dog.id} to="/dogs/$dogId" params={{ dogId: dog.id }} className="flex flex-col gap-3 group scroll-mt-24">
             <img
               src={dog.image}
               alt={dog.name}
+              loading="lazy"
               className="w-full aspect-4/3 object-cover rounded-xl transition-transform ease-in-out group-hover:scale-[1.02]"
             />
             <div className="flex flex-col gap-1">
