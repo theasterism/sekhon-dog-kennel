@@ -1,8 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { siteConfig } from "@/config/site";
 import { DesktopNav } from "./desktop-nav";
 import { MobileNav } from "./mobile-nav";
-import { siteConfig } from "@/config/site";
 
 export function MarketingHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -38,4 +38,3 @@ export function MarketingHeader() {
     </header>
   );
 }
-

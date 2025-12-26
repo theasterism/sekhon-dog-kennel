@@ -131,6 +131,12 @@
   }
 }
 
+@utility extend-touch-target {
+  @media (pointer: coarse) {
+    @apply relative touch-manipulation after:absolute after:-inset-2;
+  }
+}
+
 @keyframes page-fade-in {
   from {
     opacity: 0;
@@ -166,4 +172,3 @@
     opacity: 1;
   }
 }
-
