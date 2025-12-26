@@ -43,7 +43,8 @@ function RouteComponent() {
 
   return (
     <main className="pt-24 flex flex-col gap-10 pb-24 px-5 mx-auto lg:flex-row lg:justify-between max-w-7xl w-full">
-      <div className=" flex flex-col gap-10">
+      {/* Left Column - Content */}
+      <div className="flex flex-col gap-10 lg:w-3/5">
         <div className="flex flex-col gap-6">
           <h1 className="tracking-tight leading-tight text-4xl sm:text-5xl font-semibold text-pretty">Get in touch</h1>
           <p className="text-base text-muted-foreground leading-relaxed max-w-[72ch] w-full">
@@ -52,36 +53,40 @@ function RouteComponent() {
           </p>
         </div>
         <Separator />
-        <ul className="flex flex-col gap-8">
+
+        {/* Contact Info */}
+        <ul className="flex flex-col gap-6">
           <li className="flex gap-4 items-start">
-            <PhoneCallIcon className="size-4.5 shrink-0 mt-1" />
+            <PhoneCallIcon className="size-5 shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-semibold text-basee mb-0.5">Phone</h3>
-              <a href={`tel:${contact.phone}`} className="text-primary hover:underline">
+              <h3 className="font-semibold mb-0.5">Phone</h3>
+              <a href={`tel:${contact.phone}`} className="text-muted-foreground hover:text-foreground transition-colors">
                 {contact.phoneDisplay}
               </a>
               <p className="text-xs text-muted-foreground mt-1">Mon-Fri 9am-6pm</p>
             </div>
           </li>
+          {contact.email && (
+            <li className="flex gap-4 items-start">
+              <Mail className="size-5 shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-semibold mb-0.5">Email</h3>
+                <a href={`mailto:${contact.email}`} className="text-muted-foreground hover:text-foreground transition-colors">
+                  {contact.email}
+                </a>
+                <p className="text-xs text-muted-foreground mt-1">We reply within 24hrs</p>
+              </div>
+            </li>
+          )}
           <li className="flex gap-4 items-start">
-            <Mail className="size-4.5 shrink-0 mt-1" />
+            <MapPin className="size-5 shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-semibold text-basee mb-0.5">Email</h3>
-              <a href={`mailto:${contact.email}`} className="text-primary hover:underline">
-                {contact.email}
-              </a>
-              <p className="text-xs text-muted-foreground mt-1">We reply within 24hrs</p>
-            </div>
-          </li>
-          <li className="flex gap-4 items-start">
-            <MapPin className="size-4.5 shrink-0 mt-1" />
-            <div>
-              <h3 className="font-semibold text-basee mb-0.5">Location</h3>
+              <h3 className="font-semibold mb-0.5">Location</h3>
               <a
                 href={mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary hover:underline"
+                className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 {address.street}, {address.city}, {address.province}
               </a>
@@ -89,10 +94,11 @@ function RouteComponent() {
           </li>
         </ul>
 
-        {/* Contact Form */}
         <Separator />
+
+        {/* Contact Form */}
         <div className="max-w-md">
-          <h2 className="font-semibold text-lg mb-4">Send us a message</h2>
+          <h2 className="text-lg font-semibold tracking-wider mb-6">Send us a message</h2>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -197,22 +203,20 @@ function RouteComponent() {
         </div>
       </div>
 
-      {/* Map Embed */}
-      <div className="w-full lg:w-1/2 lg:max-w-xl lg:mt-56">
-        <div className="rounded-xl overflow-hidden aspect-square lg:aspect-auto lg:h-full">
-          <iframe
-            src={maps.embedUrl}
-            width="100%"
-            height="100%"
-            style={{ border: 0, minHeight: 400 }}
-            allowFullScreen
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            title="Sekhon Dog Kennel Location"
-          />
-        </div>
+      {/* Right Column - Map */}
+      <div className="rounded-xl overflow-hidden aspect-square bg-muted shadow-lg relative border border-border lg:w-2/5 h-fit">
+        <iframe
+          src={maps.embedUrl}
+          width="100%"
+          height="100%"
+          style={{ border: 0, minHeight: 400 }}
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          title="Sekhon Dog Kennel Location"
+          className="absolute inset-0"
+        />
       </div>
     </main>
   );
 }
-
