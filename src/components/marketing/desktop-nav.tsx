@@ -5,13 +5,17 @@ import { navLinks } from "./nav-links";
 export function DesktopNav() {
   return (
     <nav className="hidden sm:flex items-center gap-1">
-      {navLinks.map((link) =>
-        link.isRoute ? (
-          <Button key={link.href} variant="ghost" render={<Link to={link.href}>{link.label}</Link>} />
-        ) : (
-          <Button key={link.href} variant="ghost" render={<a href={link.href}>{link.label}</a>} />
-        ),
-      )}
+      {navLinks.map((link) => (
+        <Button
+          key={link.to}
+          variant="ghost"
+          render={
+            <Link hash={link.hash} to={link.to}>
+              {link.label}
+            </Link>
+          }
+        />
+      ))}
     </nav>
   );
 }

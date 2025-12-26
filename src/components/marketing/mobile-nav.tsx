@@ -52,27 +52,11 @@ export function MobileNav() {
           <div className="flex flex-col gap-12 overflow-auto px-6 py-6 text-right h-full">
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-3">
-                {navLinks.map((link) =>
-                  link.isRoute ? (
-                    <Link
-                      key={link.href}
-                      to={link.href}
-                      onClick={() => setIsOpen(false)}
-                      className="text-2xl font-medium"
-                    >
-                      {link.label}
-                    </Link>
-                  ) : (
-                    <a
-                      key={link.href}
-                      href={link.href}
-                      onClick={() => setIsOpen(false)}
-                      className="text-2xl font-medium"
-                    >
-                      {link.label}
-                    </a>
-                  ),
-                )}{" "}
+                {navLinks.map((link) => (
+                  <Link key={link.to} to={link.to} onClick={() => setIsOpen(false)} className="text-2xl font-medium">
+                    {link.label}
+                  </Link>
+                ))}
               </div>
             </div>
 

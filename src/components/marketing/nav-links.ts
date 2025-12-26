@@ -1,6 +1,25 @@
+import { LinkOptions, linkOptions } from "@tanstack/react-router";
+
 export const navLinks = [
-  { href: "/", label: "Home", isRoute: true },
-  { href: "#available-dogs", label: "Available Dogs", isRoute: false },
-  { href: "/about", label: "About Us", isRoute: true },
-  { href: "/contact", label: "Contact", isRoute: true },
-] as const;
+  {
+    to: "/",
+    label: "Home",
+  },
+  {
+    to: "/",
+    hash: "available-dogs",
+    label: "Available Dogs",
+  },
+  {
+    to: "/about",
+    label: "About",
+  },
+  {
+    to: "/contact",
+    label: "Contact",
+  },
+] as Array<
+  LinkOptions & {
+    label: string;
+  }
+>;
