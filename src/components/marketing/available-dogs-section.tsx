@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { availableDogs } from "@/data/marketing";
+import { getAge } from "@/utils/age";
 
 export function AvailableDogsSection() {
   return (
@@ -21,7 +22,7 @@ export function AvailableDogsSection() {
                 <Badge variant="outline">{dog.status}</Badge>
               </div>
               <p className="text-sm text-muted-foreground">
-                <span>{dog.breed}</span> • <span>{dog.age}</span>
+                <span>{dog.breed}</span> • <span>{getAge(dog.dateOfBirth)}</span>
               </p>
             </div>
           </Link>
@@ -30,3 +31,4 @@ export function AvailableDogsSection() {
     </section>
   );
 }
+

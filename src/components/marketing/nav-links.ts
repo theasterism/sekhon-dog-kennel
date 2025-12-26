@@ -1,4 +1,4 @@
-import { LinkOptions, linkOptions } from "@tanstack/react-router";
+import { LinkOptions } from "@tanstack/react-router";
 
 export const navLinks = [
   {
