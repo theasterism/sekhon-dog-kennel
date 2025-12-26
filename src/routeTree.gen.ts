@@ -13,7 +13,15 @@ import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as MarketingRouteRouteImport } from './routes/_marketing/route'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as MarketingIndexRouteImport } from './routes/_marketing/index'
+import { Route as AdminSetupRouteImport } from './routes/admin/setup'
+import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as MarketingApplicationRouteImport } from './routes/_marketing/application'
+import { Route as MarketingAboutRouteImport } from './routes/_marketing/about'
 import { Route as ApiRpcSplatRouteImport } from './routes/api/rpc.$'
+import { Route as ApiAuthSetupRouteImport } from './routes/api/auth/setup'
+import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
+import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
+import { Route as MarketingDogsIdRouteImport } from './routes/_marketing/dogs/$id'
 
 const AdminRouteRoute = AdminRouteRouteImport.update({
   id: '/admin',
@@ -34,48 +42,146 @@ const MarketingIndexRoute = MarketingIndexRouteImport.update({
   path: '/',
   getParentRoute: () => MarketingRouteRoute,
 } as any)
+const AdminSetupRoute = AdminSetupRouteImport.update({
+  id: '/setup',
+  path: '/setup',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const MarketingApplicationRoute = MarketingApplicationRouteImport.update({
+  id: '/application',
+  path: '/application',
+  getParentRoute: () => MarketingRouteRoute,
+} as any)
+const MarketingAboutRoute = MarketingAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => MarketingRouteRoute,
+} as any)
 const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
   id: '/api/rpc/$',
   path: '/api/rpc/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAuthSetupRoute = ApiAuthSetupRouteImport.update({
+  id: '/api/auth/setup',
+  path: '/api/auth/setup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthLogoutRoute = ApiAuthLogoutRouteImport.update({
+  id: '/api/auth/logout',
+  path: '/api/auth/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthLoginRoute = ApiAuthLoginRouteImport.update({
+  id: '/api/auth/login',
+  path: '/api/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketingDogsIdRoute = MarketingDogsIdRouteImport.update({
+  id: '/dogs/$id',
+  path: '/dogs/$id',
+  getParentRoute: () => MarketingRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteRouteWithChildren
+  '/about': typeof MarketingAboutRoute
+  '/application': typeof MarketingApplicationRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/setup': typeof AdminSetupRoute
   '/': typeof MarketingIndexRoute
   '/admin/': typeof AdminIndexRoute
+  '/dogs/$id': typeof MarketingDogsIdRoute
+  '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/api/auth/setup': typeof ApiAuthSetupRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
 }
 export interface FileRoutesByTo {
+  '/about': typeof MarketingAboutRoute
+  '/application': typeof MarketingApplicationRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/setup': typeof AdminSetupRoute
   '/': typeof MarketingIndexRoute
   '/admin': typeof AdminIndexRoute
+  '/dogs/$id': typeof MarketingDogsIdRoute
+  '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/api/auth/setup': typeof ApiAuthSetupRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_marketing': typeof MarketingRouteRouteWithChildren
   '/admin': typeof AdminRouteRouteWithChildren
+  '/_marketing/about': typeof MarketingAboutRoute
+  '/_marketing/application': typeof MarketingApplicationRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/setup': typeof AdminSetupRoute
   '/_marketing/': typeof MarketingIndexRoute
   '/admin/': typeof AdminIndexRoute
+  '/_marketing/dogs/$id': typeof MarketingDogsIdRoute
+  '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/api/auth/setup': typeof ApiAuthSetupRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/admin' | '/' | '/admin/' | '/api/rpc/$'
+  fullPaths:
+    | '/admin'
+    | '/about'
+    | '/application'
+    | '/admin/login'
+    | '/admin/setup'
+    | '/'
+    | '/admin/'
+    | '/dogs/$id'
+    | '/api/auth/login'
+    | '/api/auth/logout'
+    | '/api/auth/setup'
+    | '/api/rpc/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/api/rpc/$'
+  to:
+    | '/about'
+    | '/application'
+    | '/admin/login'
+    | '/admin/setup'
+    | '/'
+    | '/admin'
+    | '/dogs/$id'
+    | '/api/auth/login'
+    | '/api/auth/logout'
+    | '/api/auth/setup'
+    | '/api/rpc/$'
   id:
     | '__root__'
     | '/_marketing'
     | '/admin'
+    | '/_marketing/about'
+    | '/_marketing/application'
+    | '/admin/login'
+    | '/admin/setup'
     | '/_marketing/'
     | '/admin/'
+    | '/_marketing/dogs/$id'
+    | '/api/auth/login'
+    | '/api/auth/logout'
+    | '/api/auth/setup'
     | '/api/rpc/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   MarketingRouteRoute: typeof MarketingRouteRouteWithChildren
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
+  ApiAuthLoginRoute: typeof ApiAuthLoginRoute
+  ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
+  ApiAuthSetupRoute: typeof ApiAuthSetupRoute
   ApiRpcSplatRoute: typeof ApiRpcSplatRoute
 }
 
@@ -109,6 +215,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingIndexRouteImport
       parentRoute: typeof MarketingRouteRoute
     }
+    '/admin/setup': {
+      id: '/admin/setup'
+      path: '/setup'
+      fullPath: '/admin/setup'
+      preLoaderRoute: typeof AdminSetupRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_marketing/application': {
+      id: '/_marketing/application'
+      path: '/application'
+      fullPath: '/application'
+      preLoaderRoute: typeof MarketingApplicationRouteImport
+      parentRoute: typeof MarketingRouteRoute
+    }
+    '/_marketing/about': {
+      id: '/_marketing/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof MarketingAboutRouteImport
+      parentRoute: typeof MarketingRouteRoute
+    }
     '/api/rpc/$': {
       id: '/api/rpc/$'
       path: '/api/rpc/$'
@@ -116,15 +250,49 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRpcSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/auth/setup': {
+      id: '/api/auth/setup'
+      path: '/api/auth/setup'
+      fullPath: '/api/auth/setup'
+      preLoaderRoute: typeof ApiAuthSetupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/logout': {
+      id: '/api/auth/logout'
+      path: '/api/auth/logout'
+      fullPath: '/api/auth/logout'
+      preLoaderRoute: typeof ApiAuthLogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/login': {
+      id: '/api/auth/login'
+      path: '/api/auth/login'
+      fullPath: '/api/auth/login'
+      preLoaderRoute: typeof ApiAuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_marketing/dogs/$id': {
+      id: '/_marketing/dogs/$id'
+      path: '/dogs/$id'
+      fullPath: '/dogs/$id'
+      preLoaderRoute: typeof MarketingDogsIdRouteImport
+      parentRoute: typeof MarketingRouteRoute
+    }
   }
 }
 
 interface MarketingRouteRouteChildren {
+  MarketingAboutRoute: typeof MarketingAboutRoute
+  MarketingApplicationRoute: typeof MarketingApplicationRoute
   MarketingIndexRoute: typeof MarketingIndexRoute
+  MarketingDogsIdRoute: typeof MarketingDogsIdRoute
 }
 
 const MarketingRouteRouteChildren: MarketingRouteRouteChildren = {
+  MarketingAboutRoute: MarketingAboutRoute,
+  MarketingApplicationRoute: MarketingApplicationRoute,
   MarketingIndexRoute: MarketingIndexRoute,
+  MarketingDogsIdRoute: MarketingDogsIdRoute,
 }
 
 const MarketingRouteRouteWithChildren = MarketingRouteRoute._addFileChildren(
@@ -132,10 +300,14 @@ const MarketingRouteRouteWithChildren = MarketingRouteRoute._addFileChildren(
 )
 
 interface AdminRouteRouteChildren {
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminSetupRoute: typeof AdminSetupRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminLoginRoute: AdminLoginRoute,
+  AdminSetupRoute: AdminSetupRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
@@ -146,6 +318,9 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   MarketingRouteRoute: MarketingRouteRouteWithChildren,
   AdminRouteRoute: AdminRouteRouteWithChildren,
+  ApiAuthLoginRoute: ApiAuthLoginRoute,
+  ApiAuthLogoutRoute: ApiAuthLogoutRoute,
+  ApiAuthSetupRoute: ApiAuthSetupRoute,
   ApiRpcSplatRoute: ApiRpcSplatRoute,
 }
 export const routeTree = rootRouteImport
