@@ -9,6 +9,7 @@ export function getRouter() {
     routeTree,
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
+    defaultViewTransition: true,
     context: { queryClient, api: orpc },
     defaultPreload: "intent",
     defaultNotFoundComponent: () => <p>Not Found</p>,

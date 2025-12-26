@@ -4,6 +4,10 @@ import { Button } from "@/components/ui/button";
 export function HeroSection() {
   return (
     <section id="hero" className="flex flex-col items-center gap-8 max-w-4xl mx-auto px-5 scroll-mt-24">
+      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+        <span>🐾</span>
+        <span>Family-Owned Since 2015</span>
+      </div>
       <h1 className="text-center tracking-tight leading-tight text-4xl sm:text-5xl font-semibold text-pretty">
         Find Your Perfect Furry Companion
       </h1>
