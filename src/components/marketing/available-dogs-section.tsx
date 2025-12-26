@@ -1,0 +1,31 @@
+import { Link } from "@tanstack/react-router";
+import { Badge } from "@/components/ui/badge";
+import { availableDogs } from "@/data/marketing";
+
+export function AvailableDogsSection() {
+  return (
+    <section id="available-dogs" className="max-w-6xl mx-auto px-5 scroll-mt-24">
+      <h2 className="text-3xl font-semibold text-center mb-10">Available Dogs</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {availableDogs.map((dog) => (
+          <Link key={dog.id} to="/dogs/$dogId" params={{ dogId: dog.id }} className="flex flex-col gap-3 group">
+            <img
+              src={dog.image}
+              alt={dog.name}
+              className="w-full aspect-4/3 object-cover rounded-xl transition-transform ease-in-out group-hover:scale-[1.02]"
+            />
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-lg transition-colors">{dog.name}</h3>
+                <Badge variant="outline">{dog.status}</Badge>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                <span>{dog.breed}</span> • <span>{dog.age}</span>
+              </p>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}

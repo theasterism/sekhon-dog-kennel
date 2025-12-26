@@ -15,6 +15,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as MarketingIndexRouteImport } from './routes/_marketing/index'
 import { Route as AdminSetupRouteImport } from './routes/admin/setup'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as MarketingContactRouteImport } from './routes/_marketing/contact'
 import { Route as MarketingApplicationRouteImport } from './routes/_marketing/application'
 import { Route as MarketingAboutRouteImport } from './routes/_marketing/about'
 import { Route as ApiRpcSplatRouteImport } from './routes/api/rpc.$'
@@ -22,7 +23,7 @@ import { Route as ApiImagesKeyRouteImport } from './routes/api/images/$key'
 import { Route as ApiAuthSetupRouteImport } from './routes/api/auth/setup'
 import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
 import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
-import { Route as MarketingDogsIdRouteImport } from './routes/_marketing/dogs/$id'
+import { Route as MarketingDogsDogIdRouteImport } from './routes/_marketing/dogs/$dogId'
 
 const AdminRouteRoute = AdminRouteRouteImport.update({
   id: '/admin',
@@ -52,6 +53,11 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => AdminRouteRoute,
+} as any)
+const MarketingContactRoute = MarketingContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => MarketingRouteRoute,
 } as any)
 const MarketingApplicationRoute = MarketingApplicationRouteImport.update({
   id: '/application',
@@ -88,9 +94,9 @@ const ApiAuthLoginRoute = ApiAuthLoginRouteImport.update({
   path: '/api/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MarketingDogsIdRoute = MarketingDogsIdRouteImport.update({
-  id: '/dogs/$id',
-  path: '/dogs/$id',
+const MarketingDogsDogIdRoute = MarketingDogsDogIdRouteImport.update({
+  id: '/dogs/$dogId',
+  path: '/dogs/$dogId',
   getParentRoute: () => MarketingRouteRoute,
 } as any)
 
@@ -98,11 +104,12 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof MarketingAboutRoute
   '/application': typeof MarketingApplicationRoute
+  '/contact': typeof MarketingContactRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/setup': typeof AdminSetupRoute
   '/': typeof MarketingIndexRoute
   '/admin/': typeof AdminIndexRoute
-  '/dogs/$id': typeof MarketingDogsIdRoute
+  '/dogs/$dogId': typeof MarketingDogsDogIdRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/setup': typeof ApiAuthSetupRoute
@@ -112,11 +119,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/about': typeof MarketingAboutRoute
   '/application': typeof MarketingApplicationRoute
+  '/contact': typeof MarketingContactRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/setup': typeof AdminSetupRoute
   '/': typeof MarketingIndexRoute
   '/admin': typeof AdminIndexRoute
-  '/dogs/$id': typeof MarketingDogsIdRoute
+  '/dogs/$dogId': typeof MarketingDogsDogIdRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/setup': typeof ApiAuthSetupRoute
@@ -129,11 +137,12 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteRouteWithChildren
   '/_marketing/about': typeof MarketingAboutRoute
   '/_marketing/application': typeof MarketingApplicationRoute
+  '/_marketing/contact': typeof MarketingContactRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/setup': typeof AdminSetupRoute
   '/_marketing/': typeof MarketingIndexRoute
   '/admin/': typeof AdminIndexRoute
-  '/_marketing/dogs/$id': typeof MarketingDogsIdRoute
+  '/_marketing/dogs/$dogId': typeof MarketingDogsDogIdRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/setup': typeof ApiAuthSetupRoute
@@ -146,11 +155,12 @@ export interface FileRouteTypes {
     | '/admin'
     | '/about'
     | '/application'
+    | '/contact'
     | '/admin/login'
     | '/admin/setup'
     | '/'
     | '/admin/'
-    | '/dogs/$id'
+    | '/dogs/$dogId'
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/setup'
@@ -160,11 +170,12 @@ export interface FileRouteTypes {
   to:
     | '/about'
     | '/application'
+    | '/contact'
     | '/admin/login'
     | '/admin/setup'
     | '/'
     | '/admin'
-    | '/dogs/$id'
+    | '/dogs/$dogId'
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/setup'
@@ -176,11 +187,12 @@ export interface FileRouteTypes {
     | '/admin'
     | '/_marketing/about'
     | '/_marketing/application'
+    | '/_marketing/contact'
     | '/admin/login'
     | '/admin/setup'
     | '/_marketing/'
     | '/admin/'
-    | '/_marketing/dogs/$id'
+    | '/_marketing/dogs/$dogId'
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/setup'
@@ -242,6 +254,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/_marketing/contact': {
+      id: '/_marketing/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof MarketingContactRouteImport
+      parentRoute: typeof MarketingRouteRoute
+    }
     '/_marketing/application': {
       id: '/_marketing/application'
       path: '/application'
@@ -291,11 +310,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_marketing/dogs/$id': {
-      id: '/_marketing/dogs/$id'
-      path: '/dogs/$id'
-      fullPath: '/dogs/$id'
-      preLoaderRoute: typeof MarketingDogsIdRouteImport
+    '/_marketing/dogs/$dogId': {
+      id: '/_marketing/dogs/$dogId'
+      path: '/dogs/$dogId'
+      fullPath: '/dogs/$dogId'
+      preLoaderRoute: typeof MarketingDogsDogIdRouteImport
       parentRoute: typeof MarketingRouteRoute
     }
   }
@@ -304,15 +323,17 @@ declare module '@tanstack/react-router' {
 interface MarketingRouteRouteChildren {
   MarketingAboutRoute: typeof MarketingAboutRoute
   MarketingApplicationRoute: typeof MarketingApplicationRoute
+  MarketingContactRoute: typeof MarketingContactRoute
   MarketingIndexRoute: typeof MarketingIndexRoute
-  MarketingDogsIdRoute: typeof MarketingDogsIdRoute
+  MarketingDogsDogIdRoute: typeof MarketingDogsDogIdRoute
 }
 
 const MarketingRouteRouteChildren: MarketingRouteRouteChildren = {
   MarketingAboutRoute: MarketingAboutRoute,
   MarketingApplicationRoute: MarketingApplicationRoute,
+  MarketingContactRoute: MarketingContactRoute,
   MarketingIndexRoute: MarketingIndexRoute,
-  MarketingDogsIdRoute: MarketingDogsIdRoute,
+  MarketingDogsDogIdRoute: MarketingDogsDogIdRoute,
 }
 
 const MarketingRouteRouteWithChildren = MarketingRouteRoute._addFileChildren(
