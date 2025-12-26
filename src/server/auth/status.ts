@@ -24,9 +24,7 @@ async function getAuthStatusInternal(): Promise<AuthResult> {
       ok: true,
       data: {
         isSetupComplete,
-        session: isAuthenticated
-          ? { isAuthenticated: true as const, ...session }
-          : { isAuthenticated: false as const },
+        session: isAuthenticated ? { isAuthenticated: true as const, ...session } : { isAuthenticated: false as const },
       },
     };
   } catch (error) {

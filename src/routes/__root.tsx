@@ -1,8 +1,8 @@
 import { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
+import { Toaster } from "@/components/ui/sonner";
 import appCss from "@/styles/globals.css?url";
 import { orpc } from "@/utils/orpc";
-import { Toaster } from "@/components/ui/sonner";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -45,4 +45,3 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     </html>
   );
 }
-

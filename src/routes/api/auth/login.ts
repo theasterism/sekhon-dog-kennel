@@ -2,10 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { eq } from "drizzle-orm";
 import { checkPassword } from "@/server/auth/hash";
 import { authRatelimitMiddleware } from "@/server/auth/middleware";
+import { createSession, setSessionCookie } from "@/server/auth/session";
 import { db } from "@/server/db/client";
 import { UserTable } from "@/server/db/schema";
 import { AuthLoginSchema } from "@/utils/validations/auth";
-import { createSession, setSessionCookie } from "@/server/auth/session";
 
 export const Route = createFileRoute("/api/auth/login")({
   server: {

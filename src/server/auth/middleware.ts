@@ -3,12 +3,12 @@ import { createMiddleware } from "@tanstack/react-start";
 
 export const authRatelimitMiddleware = createMiddleware().server(async ({ request, next }) => {
   const isDev = env.NODE_ENV !== "production";
-  
+
   // CSRF protection: Verify Origin header for state-changing requests
   if (request.method === "POST") {
     const origin = request.headers.get("Origin");
     const host = request.headers.get("Host");
-    
+
     if (!isDev && origin) {
       const originHost = new URL(origin).host;
       if (originHost !== host) {

@@ -25,7 +25,6 @@ export async function createSession(userId: number) {
     userId,
   });
 
-
   return {
     id: sessionId,
     expiresAt,
@@ -79,7 +78,6 @@ export async function getCurrentSession() {
 
   return session;
 }
-
 
 export async function deleteSession(rawSessionId: string) {
   const sessionIdHash = await computeShaHash("SHA-256", rawSessionId);
