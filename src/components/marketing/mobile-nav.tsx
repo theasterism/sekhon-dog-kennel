@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { navLinks } from "./nav-links";
+import { cn } from "@/utils/cn";
 
 export function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,10 +21,23 @@ export function MobileNav() {
     <div className="sm:hidden">
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger render={<Button variant="ghost" size="icon" className="extend-touch-target" />}>
-          <div className="relative size-4">
-            <span className="bg-foreground absolute left-0 block h-0.5 w-4 top-1" />
-            <span className="bg-foreground absolute left-0 block h-0.5 w-4 top-2.5" />
-          </div>
+          <div className="relative flex h-8 w-4 items-center justify-center">
+            <div className="relative size-4">
+              <span
+                className={cn(
+                  "bg-foreground absolute left-0 block h-0.5 w-4 transition-all duration-100",
+                  isOpen ? "top-[0.4rem] -rotate-45" : "top-1",
+                )}
+              />
+              <span
+                className={cn(
+                  "bg-foreground absolute left-0 block h-0.5 w-4 transition-all duration-100",
+                  isOpen ? "top-[0.4rem] rotate-45" : "top-2.5",
+                )}
+              />
+            </div>
+            <span className="sr-only">Toggle Menu</span>
+          </div>{" "}
           <span className="sr-only">Toggle Menu</span>
         </PopoverTrigger>
         <PopoverContent
