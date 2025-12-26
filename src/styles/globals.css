@@ -133,6 +133,10 @@
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
   }
+
+  #root {
+    isolation: isolate;
+  }
 }
 
 @utility extend-touch-target {
