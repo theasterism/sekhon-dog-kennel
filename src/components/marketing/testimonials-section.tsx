@@ -3,7 +3,7 @@ import { testimonials } from "@/data/marketing";
 
 export function TestimonialsSection() {
   return (
-    <section id="testimonials" className="max-w-6xl mx-auto px-5 scroll-mt-24">
+    <section id="testimonials" className="max-w-7xl mx-auto px-5 scroll-mt-24">
       <h2 className="text-3xl font-semibold text-center mb-10">What Our Families Say</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {testimonials.map((testimonial) => (

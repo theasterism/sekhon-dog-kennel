@@ -9,11 +9,10 @@ export const Route = createFileRoute("/_marketing/")({
 
 function RouteComponent() {
   return (
-    <main className="pt-24 space-y-24 pb-24">
+    <main className="py-24 flex flex-col gap-24">
       <HeroSection />
       <AvailableDogsSection />
       <TestimonialsSection />
     </main>
   );
 }
-

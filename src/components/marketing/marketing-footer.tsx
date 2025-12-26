@@ -12,7 +12,7 @@ export function MarketingFooter() {
 
   return (
     <footer className="border-t bg-muted/30">
-      <div className="max-w-6xl mx-auto px-5 pt-20 pb-24">
+      <div className="max-w-7xl mx-auto px-5 pt-20 pb-24">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand */}
           <div className="flex flex-col gap-5">
