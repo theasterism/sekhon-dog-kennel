@@ -1,5 +1,6 @@
 import { env } from "cloudflare:workers";
 import { createMiddleware } from "@tanstack/react-start";
+import { apiErrorResponse, ERROR_CODES } from "@/server/errors";
 
 export const authRatelimitMiddleware = createMiddleware().server(async ({ request, next }) => {
   const isDev = env.NODE_ENV !== "production";
@@ -12,15 +13,7 @@ export const authRatelimitMiddleware = createMiddleware().server(async ({ reques
     if (!isDev && origin) {
       const originHost = new URL(origin).host;
       if (originHost !== host) {
-        return new Response(
-          JSON.stringify({
-            error: {
-              code: "FORBIDDEN",
-              message: "Invalid request origin.",
-            },
-          }),
-          { status: 403 },
-        );
+        return apiErrorResponse(ERROR_CODES.FORBIDDEN, 403);
       }
     }
   }
@@ -35,17 +28,7 @@ export const authRatelimitMiddleware = createMiddleware().server(async ({ reques
     request.headers.get("X-Forwarded-For");
 
   if (!clientIP) {
-    return new Response(
-      JSON.stringify({
-        error: {
-          code: "BAD_REQUEST",
-          message: "Unable to determine client identity.",
-        },
-      }),
-      {
-        status: 400,
-      },
-    );
+    return apiErrorResponse(ERROR_CODES.IDENTITY_REQUIRED, 400);
   }
 
   const { success } = await env.AUTH_RATELIMIT.limit({
@@ -53,17 +36,7 @@ export const authRatelimitMiddleware = createMiddleware().server(async ({ reques
   });
 
   if (!success) {
-    return new Response(
-      JSON.stringify({
-        error: {
-          code: "TOO_MANY_REQUESTS",
-          message: "Rate limit exceeded. Please retry later.",
-        },
-      }),
-      {
-        status: 429,
-      },
-    );
+    return apiErrorResponse(ERROR_CODES.RATE_LIMIT, 429);
   }
 
   return await next();

@@ -5,6 +5,7 @@ import { authRatelimitMiddleware } from "@/server/auth/middleware";
 import { createSession, setSessionCookie } from "@/server/auth/session";
 import { db } from "@/server/db/client";
 import { UserTable } from "@/server/db/schema";
+import { apiErrorResponse, ERROR_CODES } from "@/server/errors";
 import { AuthLoginSchema } from "@/utils/validations/auth";
 
 export const Route = createFileRoute("/api/auth/login")({
@@ -23,39 +24,21 @@ export const Route = createFileRoute("/api/auth/login")({
             .where(eq(UserTable.username, credentials.data.username));
 
           // Always perform password comparison to prevent timing attacks
-          // Use a dummy hash when user doesn't exist to equalize response time
           const dummyHash = "$2a$10$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
           const hashToCheck = user?.passwordHash ?? dummyHash;
           const isValid = await checkPassword(credentials.data.password, hashToCheck);
 
           if (!user || !isValid) {
-            return new Response(
-              JSON.stringify({
-                error: {
-                  code: "UNAUTHORIZED",
-                  message: "Invalid username or password.",
-                },
-              }),
-              { status: 401 },
-            );
+            return apiErrorResponse(ERROR_CODES.INVALID_CREDENTIALS, 401);
           }
 
           const session = await createSession(user.id);
-
           setSessionCookie(session.id);
 
           return Response.json({ ok: true });
         }
 
-        return new Response(
-          JSON.stringify({
-            error: {
-              code: "BAD_REQUEST",
-              message: `Invalid request payload: ${credentials.error?.message}`,
-            },
-          }),
-          { status: 400 },
-        );
+        return apiErrorResponse(ERROR_CODES.BAD_REQUEST, 400, `Invalid request payload: ${credentials.error?.message}`);
       },
     },
   },
