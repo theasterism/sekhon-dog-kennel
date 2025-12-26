@@ -1,8 +1,8 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
-import { CheckCircle, ChevronRight } from "lucide-react";
-import { availableDogs } from "@/data/marketing";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { CheckCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { availableDogs } from "@/data/marketing";
 import { getAge } from "@/utils/age";
 import { capitalize } from "@/utils/format";
 
@@ -39,15 +39,15 @@ function RouteComponent() {
   return (
     <main className="py-16 flex flex-col gap-8 px-5 mx-auto max-w-7xl w-full">
       {/* Breadcrumbs */}
-      <nav className="flex items-center gap-1 text-sm text-muted-foreground">
+      <nav className="flex items-center gap-1.5 text-sm text-muted-foreground">
         <Link to="/" className="hover:text-foreground transition-colors">
           Home
         </Link>
-        <ChevronRight className="size-4" />
+        <span className="text-muted-foreground">/</span>
         <Link to="/" hash="available-dogs" className="hover:text-foreground transition-colors">
           Available Dogs
         </Link>
-        <ChevronRight className="size-4" />
+        <span className="text-muted-foreground">/</span>
         <span className="text-foreground font-medium">{data?.name}</span>
       </nav>
 
@@ -124,5 +124,3 @@ function RouteComponent() {
     </main>
   );
 }
-
-
