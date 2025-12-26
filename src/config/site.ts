@@ -2,15 +2,15 @@ export const siteConfig = {
   name: "Sekhon Dog Kennel",
   tagline: "Surrey, BC's trusted family-owned kennel, raising happy, healthy puppies with love and care.",
   address: {
-    street: "123 Kennel Road",
+    street: "12954 98B Ave",
     city: "Surrey",
     province: "BC",
-    postalCode: "V3S 1A1",
+    postalCode: "V3T 1E1",
     country: "Canada",
   },
   contact: {
-    phone: "+16045551234",
-    phoneDisplay: "(604) 555-1234",
-    email: "info@sekhondogkennel.com",
+    phone: "+17786816730",
+    phoneDisplay: "(778) 681-6730",
+    email: "",
   },
 } as const;
