@@ -1,7 +1,15 @@
+import { revalidateLogic, useForm } from "@tanstack/react-form";
 import { createFileRoute } from "@tanstack/react-router";
 import { Mail, MapPin, PhoneCallIcon } from "lucide-react";
+import { toast } from "sonner";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 import { siteConfig } from "@/config/site";
+import { ContactFormSchema } from "@/utils/validations/contact";
 
 export const Route = createFileRoute("/_marketing/contact")({
   component: RouteComponent,
@@ -9,6 +17,29 @@ export const Route = createFileRoute("/_marketing/contact")({
 
 function RouteComponent() {
   const { address, contact, maps } = siteConfig;
+
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    `${address.street}, ${address.city}, ${address.province} ${address.postalCode}`,
+  )}`;
+
+  const form = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      message: "",
+    } as z.input<typeof ContactFormSchema>,
+    validationLogic: revalidateLogic(),
+    validators: {
+      onChangeAsync: ContactFormSchema,
+      onChangeAsyncDebounceMs: 500,
+    },
+    onSubmit: ({ value }) => {
+      console.log("Contact form submitted:", value);
+      toast.success("Message sent!", { description: "We'll get back to you soon." });
+      form.reset();
+    },
+  });
 
   return (
     <main className="pt-24 flex flex-col gap-10 pb-24 px-5 mx-auto lg:flex-row lg:justify-between max-w-7xl w-full">
@@ -46,12 +77,124 @@ function RouteComponent() {
             <MapPin className="size-4.5 shrink-0 mt-1" />
             <div>
               <h3 className="font-semibold text-basee mb-0.5">Location</h3>
-              <p className="text-primary ">
-                {address.street} {address.city}, {address.province}
-              </p>
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                {address.street}, {address.city}, {address.province}
+              </a>
             </div>
           </li>
         </ul>
+
+        {/* Contact Form */}
+        <Separator />
+        <div className="max-w-md">
+          <h2 className="font-semibold text-lg mb-4">Send us a message</h2>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              form.handleSubmit();
+            }}
+          >
+            <FieldGroup>
+              <form.Field name="name">
+                {(field) => {
+                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        placeholder="Your name"
+                        aria-invalid={isInvalid}
+                      />
+                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                    </Field>
+                  );
+                }}
+              </form.Field>
+
+              <form.Field name="email">
+                {(field) => {
+                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                      <Input
+                        type="email"
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        placeholder="you@example.com"
+                        aria-invalid={isInvalid}
+                      />
+                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                    </Field>
+                  );
+                }}
+              </form.Field>
+
+              <form.Field name="phone">
+                {(field) => (
+                  <Field>
+                    <FieldLabel htmlFor={field.name}>Phone (optional)</FieldLabel>
+                    <Input
+                      type="tel"
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      placeholder="(555) 123-4567"
+                    />
+                  </Field>
+                )}
+              </form.Field>
+
+              <form.Field name="message">
+                {(field) => {
+                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>Message</FieldLabel>
+                      <Textarea
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        placeholder="Tell us about what you're looking for..."
+                        rows={4}
+                        aria-invalid={isInvalid}
+                      />
+                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                    </Field>
+                  );
+                }}
+              </form.Field>
+
+              <Field>
+                <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+                  {([canSubmit, isSubmitting]) => (
+                    <Button disabled={!canSubmit || isSubmitting} type="submit">
+                      {isSubmitting ? "Sending..." : "Send Message"}
+                    </Button>
+                  )}
+                </form.Subscribe>
+              </Field>
+            </FieldGroup>
+          </form>
+        </div>
       </div>
 
       {/* Map Embed */}
@@ -72,3 +215,4 @@ function RouteComponent() {
     </main>
   );
 }
+
