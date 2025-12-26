@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 import { createMiddleware } from "@tanstack/react-start";
-import { apiErrorResponse, ERROR_CODES } from "@/server/errors";
+import { apiError, apiErrorResponse, ERROR_CODES } from "@/server/errors";
 
 export const authRatelimitMiddleware = createMiddleware().server(async ({ request, next }) => {
   const isDev = env.NODE_ENV !== "production";
@@ -13,7 +13,7 @@ export const authRatelimitMiddleware = createMiddleware().server(async ({ reques
     if (!isDev && origin) {
       const originHost = new URL(origin).host;
       if (originHost !== host) {
-        return apiErrorResponse(ERROR_CODES.FORBIDDEN, 403);
+        return apiErrorResponse(apiError(ERROR_CODES.FORBIDDEN, 403));
       }
     }
   }
@@ -28,7 +28,7 @@ export const authRatelimitMiddleware = createMiddleware().server(async ({ reques
     request.headers.get("X-Forwarded-For");
 
   if (!clientIP) {
-    return apiErrorResponse(ERROR_CODES.IDENTITY_REQUIRED, 400);
+    return apiErrorResponse(apiError(ERROR_CODES.IDENTITY_REQUIRED, 400));
   }
 
   const { success } = await env.AUTH_RATELIMIT.limit({
@@ -36,7 +36,7 @@ export const authRatelimitMiddleware = createMiddleware().server(async ({ reques
   });
 
   if (!success) {
-    return apiErrorResponse(ERROR_CODES.RATE_LIMIT, 429);
+    return apiErrorResponse(apiError(ERROR_CODES.RATE_LIMIT, 429));
   }
 
   return await next();
