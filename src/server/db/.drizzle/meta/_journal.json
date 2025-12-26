@@ -36,6 +36,13 @@
       "when": 1766754781459,
       "tag": "0004_warm_blizzard",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1766776283306,
+      "tag": "0005_absent_firestar",
+      "breakpoints": true
     }
   ]
 }

@@ -42,8 +42,13 @@ export const DogTable = sqliteTable("dog", {
   color: text(),
   weight: real(),
   description: text(),
-  isAvailable: integer({ mode: "boolean" }).default(true),
+  status: text({ enum: ["available", "reserved", "sold"] }).default("available"),
   price: real(),
+  // Health info
+  microchipped: integer({ mode: "boolean" }).default(false),
+  vaccinations: text({ mode: "json" }).$type<string[]>(),
+  dewormings: integer().default(0),
+  vetChecked: integer({ mode: "boolean" }).default(false),
   createdAt: integer({ mode: "timestamp_ms" }).default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`).notNull(),
   updatedAt: integer({ mode: "timestamp_ms" })
     .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
