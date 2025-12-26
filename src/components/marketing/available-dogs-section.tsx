@@ -11,7 +11,7 @@ export function AvailableDogsSection() {
         {availableDogs.map((dog) => (
           <Link key={dog.id} to="/dogs/$dogId" params={{ dogId: dog.id }} className="flex flex-col gap-3 group scroll-mt-24">
             <img
-              src={dog.image}
+              src={dog.images[0]}
               alt={dog.name}
               loading="lazy"
               className="w-full aspect-4/3 object-cover rounded-xl transition-transform ease-in-out group-hover:scale-[1.02]"
