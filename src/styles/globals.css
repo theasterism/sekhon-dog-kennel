@@ -122,12 +122,16 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply font-sans bg-background text-foreground;
-    animation: page-fade-in 300ms ease-out;
-  }
+
   html {
-    @apply font-sans scroll-smooth;
+    @apply scroll-smooth overscroll-y-none;
+  }
+
+  body {
+    @apply font-sans bg-background text-foreground overscroll-y-none;
+    animation: page-fade-in 300ms ease-out;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
   }
 }
 
