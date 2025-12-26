@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { availableDogs } from "@/data/marketing";
 import { getAge } from "@/utils/age";
@@ -7,8 +8,9 @@ export function AvailableDogsSection() {
   return (
     <section id="available-dogs" className="max-w-6xl mx-auto px-5 scroll-mt-24">
       <h2 className="text-3xl font-semibold text-center mb-10">Available Dogs</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {availableDogs.map((dog) => (
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        {availableDogs.slice(0, 4).map((dog) => (
           <Link key={dog.id} to="/dogs/$dogId" params={{ dogId: dog.id }} className="flex flex-col gap-3 group scroll-mt-24">
             <img
               src={dog.images[0]}
@@ -27,6 +29,10 @@ export function AvailableDogsSection() {
             </div>
           </Link>
         ))}
+      </div>
+
+      <div className="flex justify-center">
+        <Button variant="outline" size="lg" render={<Link to="/dogs">View All Dogs</Link>} />
       </div>
     </section>
   );
