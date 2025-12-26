@@ -1,7 +1,8 @@
 export const siteConfig = {
   name: "Sekhon Dog Kennel",
   tagline: "Surrey, BC's trusted family-owned kennel, raising happy, healthy puppies with love and care.",
-  url: "https://sekhondogkennel.com",
+  url: "", // TODO: Add production URL when domain is ready
+  ogImage: "/images/hero-puppies.png",
   address: {
     street: "12954 98B Ave",
     city: "Surrey",
@@ -16,9 +17,5 @@ export const siteConfig = {
   },
   social: {
     instagram: "https://instagram.com/sekhon_kennel_canada",
-  },
-  maps: {
-    embedUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2607.5!2d-122.8!3d49.18!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDnCsDEwJzQ4LjAiTiAxMjLCsDQ4JzAwLjAiVw!5e0!3m2!1sen!2sca!4v1",
   },
 } as const;

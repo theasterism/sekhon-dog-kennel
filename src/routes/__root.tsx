@@ -39,12 +39,12 @@ export const Route = createRootRouteWithContext<{
       { property: "og:description", content: siteConfig.tagline },
       { property: "og:url", content: siteConfig.url },
       { property: "og:site_name", content: siteConfig.name },
-      { property: "og:image", content: `${siteConfig.url}/images/hero-puppies.png` },
+      { property: "og:image", content: `${siteConfig.url}${siteConfig.ogImage}` },
       // Twitter
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: siteConfig.name },
       { name: "twitter:description", content: siteConfig.tagline },
-      { name: "twitter:image", content: `${siteConfig.url}/images/hero-puppies.png` },
+      { name: "twitter:image", content: `${siteConfig.url}${siteConfig.ogImage}` },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
