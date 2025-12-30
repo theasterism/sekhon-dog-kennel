@@ -34,7 +34,8 @@ export const SessionTable = sqliteTable(
 
 export const DogTable = sqliteTable("dog", {
   id: text().primaryKey(),
-  name: text().notNull(),
+  name: text().notNull().default("Untitled"),
+  publishedAt: integer({ mode: "timestamp_ms" }),
   breed: text(),
   dateOfBirth: integer({ mode: "timestamp" }),
   gender: text({ enum: ["male", "female"] }),

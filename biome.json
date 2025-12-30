@@ -1,5 +1,6 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
+  "plugins": ["./biome-plugins/zod-import.grit"],
   "vcs": {
     "enabled": false,
     "clientKind": "git",

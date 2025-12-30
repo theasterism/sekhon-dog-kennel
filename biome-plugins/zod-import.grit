@@ -1,0 +1,5 @@
+language js
+
+`import $binding from "zod"` as $match where {
+  register_diagnostic(span=$match, message="Use namespace import: import * as z from 'zod'")
+}
