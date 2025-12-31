@@ -1,8 +1,9 @@
 import { onError } from "@orpc/server";
 import { RPCHandler } from "@orpc/server/fetch";
+import { BatchHandlerPlugin } from "@orpc/server/plugins";
 import { createFileRoute } from "@tanstack/react-router";
-import { appRouter } from "@/server/api/router";
 import { createContext } from "@/server/api/orpc";
+import { appRouter } from "@/server/api/router";
 
 const handler = new RPCHandler(appRouter, {
   interceptors: [
@@ -10,6 +11,7 @@ const handler = new RPCHandler(appRouter, {
       console.error(error);
     }),
   ],
+  plugins: [new BatchHandlerPlugin()],
 });
 
 export const Route = createFileRoute("/api/rpc/$")({

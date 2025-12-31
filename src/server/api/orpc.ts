@@ -1,6 +1,7 @@
 import { env } from "cloudflare:workers";
 import { createORPCClient, ORPCError } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
+import { BatchLinkPlugin } from "@orpc/client/plugins";
 import type { RouterClient } from "@orpc/server";
 import { createRouterClient, os } from "@orpc/server";
 import { createIsomorphicFn } from "@tanstack/react-start";
@@ -44,6 +45,16 @@ const getORPCClient = createIsomorphicFn()
   .client((): RouterClient<typeof appRouter> => {
     const link = new RPCLink({
       url: `${window.location.origin}/api/rpc`,
+      plugins: [
+        new BatchLinkPlugin({
+          groups: [
+            {
+              condition: () => true,
+              context: {},
+            },
+          ],
+        }),
+      ],
     });
     return createORPCClient(link);
   });
