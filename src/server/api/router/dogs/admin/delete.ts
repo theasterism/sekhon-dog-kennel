@@ -1,35 +1,32 @@
-import { ORPCError } from "@orpc/server";
 import { eq } from "drizzle-orm";
 import * as z from "zod";
-import { o, requireAuth } from "@/server/api/orpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import { DogTable } from "@/server/db/schema";
+import { Result } from "@/utils/result";
 
-export const deleteDog = o
-  .use(requireAuth)
-  .input(
-    z.object({
-      id: z.string(),
-    }),
-  )
-  .handler(async ({ context, input }) => {
-    const { db, bucket } = context;
-    const { id } = input;
+export const delete_ = protectedProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
+  const { db, bucket } = ctx;
+  const { id } = input;
 
-    // Verify dog exists
-    const [dog] = await db.select({ id: DogTable.id }).from(DogTable).where(eq(DogTable.id, id));
+  const [dog] = await db.select({ id: DogTable.id }).from(DogTable).where(eq(DogTable.id, id));
 
-    if (!dog) {
-      throw new ORPCError("NOT_FOUND", { message: "Dog not found" });
-    }
+  if (!dog) {
+    return Result.err({ code: "NOT_FOUND" as const, message: "Dog not found" });
+  }
 
-    // Delete all images from R2 using scan
-    const prefix = `dogs/${id}/`;
-    for await (const [key] of bucket.scan(prefix)) {
-      await bucket.remove(key);
-    }
+  const result = await Result.tryCatchAsync(
+    async () => {
+      const prefix = `dogs/${id}/`;
+      for await (const [key] of bucket.scan(prefix)) {
+        await bucket.remove(key);
+      }
 
-    // Delete dog record (cascades to DogImageTable)
-    await db.delete(DogTable).where(eq(DogTable.id, id));
+      await db.delete(DogTable).where(eq(DogTable.id, id));
 
-    return { success: true };
-  });
+      return { success: true as const };
+    },
+    (e) => ({ code: "DELETE_ERROR" as const, message: "Failed to delete dog", cause: e }),
+  );
+
+  return result;
+});

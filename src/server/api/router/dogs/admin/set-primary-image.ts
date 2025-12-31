@@ -1,32 +1,30 @@
 import { eq } from "drizzle-orm";
 import * as z from "zod";
-import { ORPCError } from "@orpc/server";
-import { o, requireAuth } from "@/server/api/orpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import { DogImageTable } from "@/server/db/schema";
+import { Result } from "@/utils/result";
 
-export const setPrimaryImage = o
-  .use(requireAuth)
-  .input(
-    z.object({
-      imageId: z.string(),
-    }),
-  )
-  .handler(async ({ context, input }) => {
-    const { db } = context;
+export const setPrimaryImage = protectedProcedure
+  .input(z.object({ imageId: z.string() }))
+  .mutation(async ({ ctx, input }) => {
+    const { db } = ctx;
     const { imageId } = input;
 
-    // Fetch image to get dogId
     const [image] = await db.select().from(DogImageTable).where(eq(DogImageTable.id, imageId));
 
     if (!image) {
-      throw new ORPCError("NOT_FOUND", { message: "Image not found" });
+      return Result.err({ code: "NOT_FOUND" as const, message: "Image not found" });
     }
 
-    // Unset all other primary images for this dog
-    await db.update(DogImageTable).set({ isPrimary: false }).where(eq(DogImageTable.dogId, image.dogId));
+    const result = await Result.tryCatchAsync(
+      async () => {
+        await db.update(DogImageTable).set({ isPrimary: false }).where(eq(DogImageTable.dogId, image.dogId));
+        await db.update(DogImageTable).set({ isPrimary: true }).where(eq(DogImageTable.id, imageId));
 
-    // Set this image as primary
-    await db.update(DogImageTable).set({ isPrimary: true }).where(eq(DogImageTable.id, imageId));
+        return { success: true as const };
+      },
+      (e) => ({ code: "DB_ERROR" as const, message: "Failed to set primary image", cause: e }),
+    );
 
-    return { success: true };
+    return result;
   });

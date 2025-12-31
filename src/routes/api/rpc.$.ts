@@ -1,31 +1,21 @@
-import { onError } from "@orpc/server";
-import { RPCHandler } from "@orpc/server/fetch";
-import { BatchHandlerPlugin } from "@orpc/server/plugins";
+import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { createFileRoute } from "@tanstack/react-router";
-import { createContext } from "@/server/api/orpc";
-import { appRouter } from "@/server/api/router";
-
-const handler = new RPCHandler(appRouter, {
-  interceptors: [
-    onError((error) => {
-      console.error(error);
-    }),
-  ],
-  plugins: [new BatchHandlerPlugin()],
-});
+import { createContext } from "@/server/api/trpc";
+import { appRouter } from "@/server/api/root";
 
 export const Route = createFileRoute("/api/rpc/$")({
   server: {
     handlers: {
       ANY: async ({ request }) => {
-        const { response } = await handler.handle(request, {
-          prefix: "/api/rpc",
-          context: await createContext({
-            req: request,
-          }),
+        return fetchRequestHandler({
+          endpoint: "/api/rpc",
+          req: request,
+          router: appRouter,
+          createContext: () => createContext({ headers: request.headers }),
+          onError: ({ error }) => {
+            console.error("tRPC error:", error);
+          },
         });
-
-        return response ?? new Response("Not Found", { status: 404 });
       },
     },
   },

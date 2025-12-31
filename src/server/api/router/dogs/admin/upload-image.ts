@@ -1,13 +1,12 @@
-import { ORPCError } from "@orpc/server";
 import { eq } from "drizzle-orm";
 import * as z from "zod";
-import { o, requireAuth } from "@/server/api/orpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import { DogImageTable, DogTable } from "@/server/db/schema";
 import { ALLOWED_TYPES, MAX_FILE_SIZE } from "@/server/storage/r2";
 import { createId } from "@/server/utils";
+import { Result } from "@/utils/result";
 
-export const uploadImage = o
-  .use(requireAuth)
+export const uploadImage = protectedProcedure
   .input(
     z.object({
       dogId: z.string(),
@@ -15,65 +14,66 @@ export const uploadImage = o
       isPrimary: z.boolean().optional(),
     }),
   )
-  .handler(async ({ context, input }) => {
-    const { db, bucket } = context;
+  .mutation(async ({ ctx, input }) => {
+    const { db, bucket } = ctx;
     const { dogId, file, isPrimary } = input;
 
-    // Verify dog exists
     const [dog] = await db.select({ id: DogTable.id }).from(DogTable).where(eq(DogTable.id, dogId));
 
     if (!dog) {
-      throw new ORPCError("NOT_FOUND", { message: "Dog not found" });
+      return Result.err({ code: "NOT_FOUND" as const, message: "Dog not found" });
     }
 
-    // Validate file type
     if (!ALLOWED_TYPES.includes(file.type)) {
-      throw new ORPCError("BAD_REQUEST", {
+      return Result.err({
+        code: "VALIDATION_ERROR" as const,
         message: `Invalid file type. Allowed: ${ALLOWED_TYPES.join(", ")}`,
       });
     }
 
-    // Validate file size
     if (file.size > MAX_FILE_SIZE) {
-      throw new ORPCError("BAD_REQUEST", {
+      return Result.err({
+        code: "VALIDATION_ERROR" as const,
         message: `File too large. Max size: ${MAX_FILE_SIZE / 1024 / 1024}MB`,
       });
     }
 
-    // Generate image ID and R2 key
     const imageId = createId();
     const ext = file.name.split(".").pop() || "jpg";
     const r2Key = `dogs/${dogId}/${imageId}.${ext}`;
 
-    // Upload to R2
-    await bucket.set(r2Key, file, {
-      contentType: file.type,
-      size: file.size,
-    });
+    const result = await Result.tryCatchAsync(
+      async () => {
+        await bucket.set(r2Key, file, {
+          contentType: file.type,
+          size: file.size,
+        });
 
-    // If setting as primary, unset other primary images
-    if (isPrimary) {
-      await db.update(DogImageTable).set({ isPrimary: false }).where(eq(DogImageTable.dogId, dogId));
-    }
+        if (isPrimary) {
+          await db.update(DogImageTable).set({ isPrimary: false }).where(eq(DogImageTable.dogId, dogId));
+        }
 
-    // Get current max display order
-    const [maxOrder] = await db
-      .select({ displayOrder: DogImageTable.displayOrder })
-      .from(DogImageTable)
-      .where(eq(DogImageTable.dogId, dogId))
-      .orderBy(DogImageTable.displayOrder)
-      .limit(1);
+        const [maxOrder] = await db
+          .select({ displayOrder: DogImageTable.displayOrder })
+          .from(DogImageTable)
+          .where(eq(DogImageTable.dogId, dogId))
+          .orderBy(DogImageTable.displayOrder)
+          .limit(1);
 
-    const displayOrder = (maxOrder?.displayOrder ?? -1) + 1;
+        const displayOrder = (maxOrder?.displayOrder ?? -1) + 1;
 
-    // Insert image record
-    await db.insert(DogImageTable).values({
-      id: imageId,
-      dogId,
-      r2Key,
-      isPrimary: isPrimary ?? false,
-      displayOrder,
-    });
+        await db.insert(DogImageTable).values({
+          id: imageId,
+          dogId,
+          r2Key,
+          isPrimary: isPrimary ?? false,
+          displayOrder,
+        });
 
-    return { imageId, r2Key };
+        return { imageId, r2Key };
+      },
+      (e) => ({ code: "UPLOAD_ERROR" as const, message: "Failed to upload image", cause: e }),
+    );
+
+    return result;
   });

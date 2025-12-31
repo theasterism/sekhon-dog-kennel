@@ -1,4 +1,6 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { api } from "@/lib/trpc";
 
 export const Route = createFileRoute("/admin/")({
   beforeLoad: ({ context, location }) => {
@@ -12,9 +14,17 @@ export const Route = createFileRoute("/admin/")({
       });
     }
   },
+  loader: ({ context: { api, queryClient } }) => queryClient.ensureQueryData(api.hello.greet.queryOptions()),
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  return <div>Hello "/admin/"!</div>;
+  const { data } = useQuery(api.hello.greet.queryOptions());
+
+  return (
+    <div className="p-8">
+      <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
+      <p className="text-muted-foreground">tRPC Test: {data?.message}</p>
+    </div>
+  );
 }

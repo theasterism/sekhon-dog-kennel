@@ -1,13 +1,19 @@
-import { o, requireAuth } from "@/server/api/orpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import { DogTable } from "@/server/db/schema";
 import { createId } from "@/server/utils";
+import { Result } from "@/utils/result";
 
-export const createDog = o.use(requireAuth).handler(async ({ context }) => {
-  const { db } = context;
-
+export const create = protectedProcedure.mutation(async ({ ctx }) => {
+  const { db } = ctx;
   const id = createId();
 
-  await db.insert(DogTable).values({ id });
+  const result = await Result.tryCatchAsync(
+    async () => {
+      await db.insert(DogTable).values({ id });
+      return { id };
+    },
+    (e) => ({ code: "DB_ERROR" as const, message: "Failed to create dog", cause: e }),
+  );
 
-  return { id };
+  return result;
 });

@@ -1,10 +1,15 @@
-import { QueryClient } from "@tanstack/react-query";
+import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
+import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/config/site";
+import type { AppRouter } from "@/server/api/root";
 import appCss from "@/styles/globals.css?url";
-import { orpc } from "@/utils/orpc";
 
+interface RouterContext {
+  queryClient: QueryClient;
+  api: TRPCOptionsProxy<AppRouter>;
+}
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -24,10 +29,7 @@ const jsonLd = {
   sameAs: [siteConfig.social.instagram],
 };
 
-export const Route = createRootRouteWithContext<{
-  queryClient: QueryClient;
-  api: typeof orpc;
-}>()({
+export const Route = createRootRouteWithContext<RouterContext>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },

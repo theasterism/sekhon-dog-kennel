@@ -1,32 +1,30 @@
-import { ORPCError } from "@orpc/server";
 import { eq } from "drizzle-orm";
 import * as z from "zod";
-import { o, requireAuth } from "@/server/api/orpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import { DogImageTable } from "@/server/db/schema";
+import { Result } from "@/utils/result";
 
-export const deleteImage = o
-  .use(requireAuth)
-  .input(
-    z.object({
-      imageId: z.string(),
-    }),
-  )
-  .handler(async ({ context, input }) => {
-    const { db, bucket } = context;
+export const deleteImage = protectedProcedure
+  .input(z.object({ imageId: z.string() }))
+  .mutation(async ({ ctx, input }) => {
+    const { db, bucket } = ctx;
     const { imageId } = input;
 
-    // Fetch image record
     const [image] = await db.select().from(DogImageTable).where(eq(DogImageTable.id, imageId));
 
     if (!image) {
-      throw new ORPCError("NOT_FOUND", { message: "Image not found" });
+      return Result.err({ code: "NOT_FOUND" as const, message: "Image not found" });
     }
 
-    // Delete from R2
-    await bucket.remove(image.r2Key);
+    const result = await Result.tryCatchAsync(
+      async () => {
+        await bucket.remove(image.r2Key);
+        await db.delete(DogImageTable).where(eq(DogImageTable.id, imageId));
 
-    // Delete from DB
-    await db.delete(DogImageTable).where(eq(DogImageTable.id, imageId));
+        return { success: true as const };
+      },
+      (e) => ({ code: "DELETE_ERROR" as const, message: "Failed to delete image", cause: e }),
+    );
 
-    return { success: true };
+    return result;
   });

@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
 import * as z from "zod";
-import { ORPCError } from "@orpc/server";
-import { o, requireAuth } from "@/server/api/orpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import { DogImageTable, DogTable } from "@/server/db/schema";
+import { Result } from "@/utils/result";
 
 const UpdateDogSchema = z.object({
   id: z.string(),
@@ -23,48 +23,53 @@ const UpdateDogSchema = z.object({
   published: z.boolean().optional(),
 });
 
-export const updateDog = o
-  .use(requireAuth)
-  .input(UpdateDogSchema)
-  .handler(async ({ context, input }) => {
-    const { db } = context;
-    const { id, published, ...inputFields } = input;
+export const update = protectedProcedure.input(UpdateDogSchema).mutation(async ({ ctx, input }) => {
+  const { db } = ctx;
+  const { id, published, ...inputFields } = input;
 
-    const [existing] = await db.select().from(DogTable).where(eq(DogTable.id, id));
+  const [existing] = await db.select().from(DogTable).where(eq(DogTable.id, id));
 
-    if (!existing) {
-      throw new ORPCError("NOT_FOUND", { message: "Dog not found" });
+  if (!existing) {
+    return Result.err({ code: "NOT_FOUND" as const, message: "Dog not found" });
+  }
+
+  const fields: Record<string, unknown> = { ...inputFields };
+
+  if (published === true) {
+    const merged = { ...existing, ...inputFields };
+
+    if (!merged.name || merged.name === "Untitled") {
+      return Result.err({
+        code: "VALIDATION_ERROR" as const,
+        message: "Cannot publish: name is required",
+      });
     }
 
-    const fields: Record<string, unknown> = { ...inputFields };
+    const images = await db
+      .select({ id: DogImageTable.id })
+      .from(DogImageTable)
+      .where(eq(DogImageTable.dogId, id))
+      .limit(1);
 
-    if (published === true) {
-      const merged = { ...existing, ...inputFields };
-
-      if (!merged.name || merged.name === "Untitled") {
-        throw new ORPCError("BAD_REQUEST", {
-          message: "Cannot publish: name is required",
-        });
-      }
-
-      const images = await db
-        .select({ id: DogImageTable.id })
-        .from(DogImageTable)
-        .where(eq(DogImageTable.dogId, id))
-        .limit(1);
-
-      if (images.length === 0) {
-        throw new ORPCError("BAD_REQUEST", {
-          message: "Cannot publish: at least one image is required",
-        });
-      }
-
-      fields.publishedAt = Date.now();
-    } else if (published === false) {
-      fields.publishedAt = null;
+    if (images.length === 0) {
+      return Result.err({
+        code: "VALIDATION_ERROR" as const,
+        message: "Cannot publish: at least one image is required",
+      });
     }
 
-    const [updated] = await db.update(DogTable).set(fields).where(eq(DogTable.id, id)).returning();
+    fields.publishedAt = Date.now();
+  } else if (published === false) {
+    fields.publishedAt = null;
+  }
 
-    return updated;
-  });
+  const result = await Result.tryCatchAsync(
+    async () => {
+      const [updated] = await db.update(DogTable).set(fields).where(eq(DogTable.id, id)).returning();
+      return updated;
+    },
+    (e) => ({ code: "DB_ERROR" as const, message: "Failed to update dog", cause: e }),
+  );
+
+  return result;
+});
