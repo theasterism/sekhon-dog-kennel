@@ -11,5 +11,7 @@ export const submit = publicProcedure.input(ContactFormSchema).mutation(async ({
     (e) => ({ code: "SUBMIT_ERROR" as const, message: "Failed to submit contact form", cause: e }),
   );
 
-  return result;
+  if (result.isErr()) throw result.error;
+
+  return result.value;
 });

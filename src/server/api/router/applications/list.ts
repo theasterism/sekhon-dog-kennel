@@ -29,5 +29,7 @@ export const list = protectedProcedure.input(ListApplicationsSchema).query(async
     (e) => ({ code: "DB_ERROR" as const, message: "Failed to list applications", cause: e }),
   );
 
-  return result;
+  if (result.isErr()) throw result.error;
+
+  return result.value;
 });

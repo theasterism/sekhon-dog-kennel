@@ -1,29 +1,25 @@
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import { router } from "@/server/api/trpc";
-
-// Hello
-import { greet } from "./router/hello/greet";
-
-// Dogs - Public
-import { list } from "./router/dogs/public/list";
-import { getById } from "./router/dogs/public/get";
-
-// Dogs - Admin
-import { create } from "./router/dogs/admin/create";
-import { update } from "./router/dogs/admin/update";
-import { delete_ as deleteDog } from "./router/dogs/admin/delete";
-import { uploadImage } from "./router/dogs/admin/upload-image";
-import { deleteImage } from "./router/dogs/admin/delete-image";
-import { setPrimaryImage } from "./router/dogs/admin/set-primary-image";
-
 // Applications
 import { create as createApplication } from "./router/applications/create";
-import { list as listApplications } from "./router/applications/list";
 import { get as getApplication } from "./router/applications/get";
+import { list as listApplications } from "./router/applications/list";
 import { updateStatus } from "./router/applications/update-status";
-
-// Contact
-import { submit } from "./router/contact/submit";
+// Stats
+import { stats } from "./router/stats";
+// Dogs - Admin
+import { create } from "./router/dogs/admin/create";
+import { delete_ as deleteDog } from "./router/dogs/admin/delete";
+import { deleteImage } from "./router/dogs/admin/delete-image";
+import { setPrimaryImage } from "./router/dogs/admin/set-primary-image";
+import { update } from "./router/dogs/admin/update";
+import { uploadImage } from "./router/dogs/admin/upload-image";
+import { getById } from "./router/dogs/public/get";
+// Dogs - Public
+import { list } from "./router/dogs/public/list";
+// Hello
+import { greet } from "./router/hello/greet";
+import { stats } from "./router/stats";
 
 export const appRouter = router({
   hello: {
@@ -52,6 +48,7 @@ export const appRouter = router({
   contact: {
     submit,
   },
+  stats,
 });
 
 export type AppRouter = typeof appRouter;

@@ -22,14 +22,14 @@ export const create = publicProcedure.input(CreateApplicationSchema).mutation(as
     .where(eq(DogTable.id, input.dogId));
 
   if (!dog) {
-    return Result.err({ code: "NOT_FOUND" as const, message: "Dog not found" });
+    throw { code: "NOT_FOUND" as const, message: "Dog not found" };
   }
 
   if (dog.status !== "available") {
-    return Result.err({
+    throw {
       code: "DOG_NOT_AVAILABLE" as const,
       message: "This dog is no longer available for applications",
-    });
+    };
   }
 
   const id = createId();
@@ -50,5 +50,7 @@ export const create = publicProcedure.input(CreateApplicationSchema).mutation(as
     (e) => ({ code: "DB_ERROR" as const, message: "Failed to submit application", cause: e }),
   );
 
-  return result;
+  if (result.isErr()) throw result.error;
+
+  return result.value;
 });

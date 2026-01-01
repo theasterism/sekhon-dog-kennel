@@ -11,7 +11,7 @@ export const delete_ = protectedProcedure.input(z.object({ id: z.string() })).mu
   const [dog] = await db.select({ id: DogTable.id }).from(DogTable).where(eq(DogTable.id, id));
 
   if (!dog) {
-    return Result.err({ code: "NOT_FOUND" as const, message: "Dog not found" });
+    throw { code: "NOT_FOUND" as const, message: "Dog not found" };
   }
 
   const result = await Result.tryCatchAsync(
@@ -28,5 +28,7 @@ export const delete_ = protectedProcedure.input(z.object({ id: z.string() })).mu
     (e) => ({ code: "DELETE_ERROR" as const, message: "Failed to delete dog", cause: e }),
   );
 
-  return result;
+  if (result.isErr()) throw result.error;
+
+  return result.value;
 });

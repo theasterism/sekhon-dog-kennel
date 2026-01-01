@@ -15,5 +15,7 @@ export const create = protectedProcedure.mutation(async ({ ctx }) => {
     (e) => ({ code: "DB_ERROR" as const, message: "Failed to create dog", cause: e }),
   );
 
-  return result;
+  if (result.isErr()) throw result.error;
+
+  return result.value;
 });

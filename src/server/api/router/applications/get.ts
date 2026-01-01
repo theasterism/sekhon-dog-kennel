@@ -35,8 +35,10 @@ export const get = protectedProcedure.input(z.object({ id: z.string() })).query(
   );
 
   if (result.isOk() && result.value === null) {
-    return Result.err({ code: "NOT_FOUND" as const, message: "Application not found" });
+    throw { code: "NOT_FOUND" as const, message: "Application not found" };
   }
 
-  return result;
+  if (result.isErr()) throw result.error;
+
+  return result.value;
 });

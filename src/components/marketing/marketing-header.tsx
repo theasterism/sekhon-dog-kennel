@@ -18,8 +18,8 @@ export function MarketingHeader() {
 
   return (
     <header
-      className={`bg-background sticky top-0 z-50  transition-[border-color] duration-200 ${
-        isScrolled ? "border-b" : "border-b border-transparent"
+      className={`bg-background border-b sticky top-0 z-50  transition-[border-color] duration-200 ${
+        isScrolled ? "border-border" : "border-transparent"
       }`}
     >
       <div className="mx-auto max-w-7xl w-full">

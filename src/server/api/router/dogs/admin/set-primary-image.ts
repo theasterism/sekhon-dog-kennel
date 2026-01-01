@@ -13,7 +13,7 @@ export const setPrimaryImage = protectedProcedure
     const [image] = await db.select().from(DogImageTable).where(eq(DogImageTable.id, imageId));
 
     if (!image) {
-      return Result.err({ code: "NOT_FOUND" as const, message: "Image not found" });
+      throw { code: "NOT_FOUND" as const, message: "Image not found" };
     }
 
     const result = await Result.tryCatchAsync(
@@ -26,5 +26,7 @@ export const setPrimaryImage = protectedProcedure
       (e) => ({ code: "DB_ERROR" as const, message: "Failed to set primary image", cause: e }),
     );
 
-    return result;
+    if (result.isErr()) throw result.error;
+
+    return result.value;
   });

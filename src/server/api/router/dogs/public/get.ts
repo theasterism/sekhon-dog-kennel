@@ -51,5 +51,7 @@ export const getById = publicProcedure.input(z.object({ id: z.string() })).query
     (e) => ({ code: "DB_ERROR" as const, message: "Failed to get dog", cause: e }),
   );
 
-  return result;
+  if (result.isErr()) throw result.error;
+
+  return result.value;
 });

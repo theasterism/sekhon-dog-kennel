@@ -26,5 +26,7 @@ export const list = publicProcedure.query(async ({ ctx }) => {
     (e) => ({ code: "DB_ERROR" as const, message: "Failed to list dogs", cause: e }),
   );
 
-  return result;
+  if (result.isErr()) throw result.error;
+
+  return result.value;
 });

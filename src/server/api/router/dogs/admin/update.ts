@@ -30,7 +30,7 @@ export const update = protectedProcedure.input(UpdateDogSchema).mutation(async (
   const [existing] = await db.select().from(DogTable).where(eq(DogTable.id, id));
 
   if (!existing) {
-    return Result.err({ code: "NOT_FOUND" as const, message: "Dog not found" });
+    throw { code: "NOT_FOUND" as const, message: "Dog not found" };
   }
 
   const fields: Record<string, unknown> = { ...inputFields };
@@ -39,10 +39,10 @@ export const update = protectedProcedure.input(UpdateDogSchema).mutation(async (
     const merged = { ...existing, ...inputFields };
 
     if (!merged.name || merged.name === "Untitled") {
-      return Result.err({
+      throw {
         code: "VALIDATION_ERROR" as const,
         message: "Cannot publish: name is required",
-      });
+      };
     }
 
     const images = await db
@@ -52,10 +52,10 @@ export const update = protectedProcedure.input(UpdateDogSchema).mutation(async (
       .limit(1);
 
     if (images.length === 0) {
-      return Result.err({
+      throw {
         code: "VALIDATION_ERROR" as const,
         message: "Cannot publish: at least one image is required",
-      });
+      };
     }
 
     fields.publishedAt = Date.now();
@@ -71,5 +71,7 @@ export const update = protectedProcedure.input(UpdateDogSchema).mutation(async (
     (e) => ({ code: "DB_ERROR" as const, message: "Failed to update dog", cause: e }),
   );
 
-  return result;
+  if (result.isErr()) throw result.error;
+
+  return result.value;
 });

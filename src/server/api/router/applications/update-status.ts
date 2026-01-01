@@ -16,7 +16,7 @@ export const updateStatus = protectedProcedure
       .where(eq(ApplicationTable.id, id));
 
     if (!existing) {
-      return Result.err({ code: "NOT_FOUND" as const, message: "Application not found" });
+      throw { code: "NOT_FOUND" as const, message: "Application not found" };
     }
 
     const result = await Result.tryCatchAsync(
@@ -32,5 +32,7 @@ export const updateStatus = protectedProcedure
       (e) => ({ code: "DB_ERROR" as const, message: "Failed to update application status", cause: e }),
     );
 
-    return result;
+    if (result.isErr()) throw result.error;
+
+    return result.value;
   });

@@ -21,21 +21,21 @@ export const uploadImage = protectedProcedure
     const [dog] = await db.select({ id: DogTable.id }).from(DogTable).where(eq(DogTable.id, dogId));
 
     if (!dog) {
-      return Result.err({ code: "NOT_FOUND" as const, message: "Dog not found" });
+      throw { code: "NOT_FOUND" as const, message: "Dog not found" };
     }
 
     if (!ALLOWED_TYPES.includes(file.type)) {
-      return Result.err({
+      throw {
         code: "VALIDATION_ERROR" as const,
         message: `Invalid file type. Allowed: ${ALLOWED_TYPES.join(", ")}`,
-      });
+      };
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      return Result.err({
+      throw {
         code: "VALIDATION_ERROR" as const,
         message: `File too large. Max size: ${MAX_FILE_SIZE / 1024 / 1024}MB`,
-      });
+      };
     }
 
     const imageId = createId();
@@ -75,5 +75,7 @@ export const uploadImage = protectedProcedure
       (e) => ({ code: "UPLOAD_ERROR" as const, message: "Failed to upload image", cause: e }),
     );
 
-    return result;
+    if (result.isErr()) throw result.error;
+
+    return result.value;
   });
