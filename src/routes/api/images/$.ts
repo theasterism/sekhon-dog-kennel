@@ -2,11 +2,11 @@ import { env } from "cloudflare:workers";
 import { createFileRoute } from "@tanstack/react-router";
 import { apiError, apiErrorResponse, ERROR_CODES } from "@/server/errors";
 
-export const Route = createFileRoute("/api/images/$key")({
+export const Route = createFileRoute("/api/images/$")({
   server: {
     handlers: {
       GET: async ({ params }) => {
-        const key = params.key;
+        const key = params._splat;
 
         if (!key) {
           return apiErrorResponse(apiError(ERROR_CODES.NOT_FOUND, 404, "Image key is required."));

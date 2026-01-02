@@ -2,6 +2,8 @@ import { eq } from "drizzle-orm";
 import * as z from "zod";
 import { publicProcedure } from "@/server/api/trpc";
 import { ApplicationTable, DogTable } from "@/server/db/schema";
+import { sendEmail } from "@/server/email/send";
+import { applicationConfirmationEmail, newApplicationAdminEmail } from "@/server/email/templates";
 import { createId } from "@/server/utils";
 import { Result } from "@/utils/result";
 
@@ -17,7 +19,7 @@ export const create = publicProcedure.input(CreateApplicationSchema).mutation(as
   const { db } = ctx;
 
   const [dog] = await db
-    .select({ id: DogTable.id, status: DogTable.status })
+    .select({ id: DogTable.id, name: DogTable.name, status: DogTable.status })
     .from(DogTable)
     .where(eq(DogTable.id, input.dogId));
 
@@ -51,6 +53,35 @@ export const create = publicProcedure.input(CreateApplicationSchema).mutation(as
   );
 
   if (result.isErr()) throw result.error;
+
+  // Send email notifications (fire and forget - don't block on email)
+  const adminEmail = newApplicationAdminEmail({
+    applicantName: input.applicantName,
+    dogName: dog.name,
+    email: input.email,
+    phone: input.phone,
+    address: input.address,
+    applicationId: id,
+  });
+
+  const confirmationEmail = applicationConfirmationEmail({
+    applicantName: input.applicantName,
+    dogName: dog.name,
+  });
+
+  // Send to admin (you should configure ADMIN_EMAIL secret or hardcode)
+  sendEmail({
+    to: "admin@sekhondogkennel.com",
+    subject: adminEmail.subject,
+    html: adminEmail.html,
+  }).catch((e) => console.error("Failed to send admin notification:", e));
+
+  // Send confirmation to applicant
+  sendEmail({
+    to: input.email,
+    subject: confirmationEmail.subject,
+    html: confirmationEmail.html,
+  }).catch((e) => console.error("Failed to send confirmation email:", e));
 
   return result.value;
 });

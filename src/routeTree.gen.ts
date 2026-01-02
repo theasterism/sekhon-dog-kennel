@@ -11,20 +11,27 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as MarketingRouteRouteImport } from './routes/_marketing/route'
-import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as MarketingIndexRouteImport } from './routes/_marketing/index'
 import { Route as AdminSetupRouteImport } from './routes/admin/setup'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as MarketingContactRouteImport } from './routes/_marketing/contact'
 import { Route as MarketingApplicationRouteImport } from './routes/_marketing/application'
 import { Route as MarketingAboutRouteImport } from './routes/_marketing/about'
+import { Route as AdminDashboardRouteRouteImport } from './routes/admin/_dashboard/route'
+import { Route as AdminDashboardIndexRouteImport } from './routes/admin/_dashboard/index'
 import { Route as MarketingDogsIndexRouteImport } from './routes/_marketing/dogs/index'
 import { Route as ApiRpcSplatRouteImport } from './routes/api/rpc.$'
-import { Route as ApiImagesKeyRouteImport } from './routes/api/images/$key'
+import { Route as ApiImagesSplatRouteImport } from './routes/api/images/$'
 import { Route as ApiAuthSetupRouteImport } from './routes/api/auth/setup'
 import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
 import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
+import { Route as AdminDashboardMediaRouteImport } from './routes/admin/_dashboard/media'
 import { Route as MarketingDogsDogIdRouteImport } from './routes/_marketing/dogs/$dogId'
+import { Route as AdminDashboardApplicationsRouteRouteImport } from './routes/admin/_dashboard/applications/route'
+import { Route as AdminDashboardApplicationsIndexRouteImport } from './routes/admin/_dashboard/applications/index'
+import { Route as AdminDashboardDogsNewRouteImport } from './routes/admin/_dashboard/dogs/new'
+import { Route as AdminDashboardApplicationsApplicationIdRouteImport } from './routes/admin/_dashboard/applications/$applicationId'
+import { Route as AdminDashboardDogsDogIdEditRouteImport } from './routes/admin/_dashboard/dogs/$dogId.edit'
 
 const AdminRouteRoute = AdminRouteRouteImport.update({
   id: '/admin',
@@ -34,11 +41,6 @@ const AdminRouteRoute = AdminRouteRouteImport.update({
 const MarketingRouteRoute = MarketingRouteRouteImport.update({
   id: '/_marketing',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AdminRouteRoute,
 } as any)
 const MarketingIndexRoute = MarketingIndexRouteImport.update({
   id: '/',
@@ -70,6 +72,15 @@ const MarketingAboutRoute = MarketingAboutRouteImport.update({
   path: '/about',
   getParentRoute: () => MarketingRouteRoute,
 } as any)
+const AdminDashboardRouteRoute = AdminDashboardRouteRouteImport.update({
+  id: '/_dashboard',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminDashboardIndexRoute = AdminDashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminDashboardRouteRoute,
+} as any)
 const MarketingDogsIndexRoute = MarketingDogsIndexRouteImport.update({
   id: '/dogs/',
   path: '/dogs/',
@@ -80,9 +91,9 @@ const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
   path: '/api/rpc/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiImagesKeyRoute = ApiImagesKeyRouteImport.update({
-  id: '/api/images/$key',
-  path: '/api/images/$key',
+const ApiImagesSplatRoute = ApiImagesSplatRouteImport.update({
+  id: '/api/images/$',
+  path: '/api/images/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSetupRoute = ApiAuthSetupRouteImport.update({
@@ -100,63 +111,115 @@ const ApiAuthLoginRoute = ApiAuthLoginRouteImport.update({
   path: '/api/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminDashboardMediaRoute = AdminDashboardMediaRouteImport.update({
+  id: '/media',
+  path: '/media',
+  getParentRoute: () => AdminDashboardRouteRoute,
+} as any)
 const MarketingDogsDogIdRoute = MarketingDogsDogIdRouteImport.update({
   id: '/dogs/$dogId',
   path: '/dogs/$dogId',
   getParentRoute: () => MarketingRouteRoute,
 } as any)
+const AdminDashboardApplicationsRouteRoute =
+  AdminDashboardApplicationsRouteRouteImport.update({
+    id: '/applications',
+    path: '/applications',
+    getParentRoute: () => AdminDashboardRouteRoute,
+  } as any)
+const AdminDashboardApplicationsIndexRoute =
+  AdminDashboardApplicationsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AdminDashboardApplicationsRouteRoute,
+  } as any)
+const AdminDashboardDogsNewRoute = AdminDashboardDogsNewRouteImport.update({
+  id: '/dogs/new',
+  path: '/dogs/new',
+  getParentRoute: () => AdminDashboardRouteRoute,
+} as any)
+const AdminDashboardApplicationsApplicationIdRoute =
+  AdminDashboardApplicationsApplicationIdRouteImport.update({
+    id: '/$applicationId',
+    path: '/$applicationId',
+    getParentRoute: () => AdminDashboardApplicationsRouteRoute,
+  } as any)
+const AdminDashboardDogsDogIdEditRoute =
+  AdminDashboardDogsDogIdEditRouteImport.update({
+    id: '/dogs/$dogId/edit',
+    path: '/dogs/$dogId/edit',
+    getParentRoute: () => AdminDashboardRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/admin': typeof AdminRouteRouteWithChildren
+  '/admin': typeof AdminDashboardRouteRouteWithChildren
   '/about': typeof MarketingAboutRoute
   '/application': typeof MarketingApplicationRoute
   '/contact': typeof MarketingContactRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/setup': typeof AdminSetupRoute
   '/': typeof MarketingIndexRoute
-  '/admin/': typeof AdminIndexRoute
+  '/admin/applications': typeof AdminDashboardApplicationsRouteRouteWithChildren
   '/dogs/$dogId': typeof MarketingDogsDogIdRoute
+  '/admin/media': typeof AdminDashboardMediaRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/setup': typeof ApiAuthSetupRoute
-  '/api/images/$key': typeof ApiImagesKeyRoute
+  '/api/images/$': typeof ApiImagesSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/dogs': typeof MarketingDogsIndexRoute
+  '/admin/': typeof AdminDashboardIndexRoute
+  '/admin/applications/$applicationId': typeof AdminDashboardApplicationsApplicationIdRoute
+  '/admin/dogs/new': typeof AdminDashboardDogsNewRoute
+  '/admin/applications/': typeof AdminDashboardApplicationsIndexRoute
+  '/admin/dogs/$dogId/edit': typeof AdminDashboardDogsDogIdEditRoute
 }
 export interface FileRoutesByTo {
+  '/admin': typeof AdminDashboardIndexRoute
   '/about': typeof MarketingAboutRoute
   '/application': typeof MarketingApplicationRoute
   '/contact': typeof MarketingContactRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/setup': typeof AdminSetupRoute
   '/': typeof MarketingIndexRoute
-  '/admin': typeof AdminIndexRoute
   '/dogs/$dogId': typeof MarketingDogsDogIdRoute
+  '/admin/media': typeof AdminDashboardMediaRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/setup': typeof ApiAuthSetupRoute
-  '/api/images/$key': typeof ApiImagesKeyRoute
+  '/api/images/$': typeof ApiImagesSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/dogs': typeof MarketingDogsIndexRoute
+  '/admin/applications/$applicationId': typeof AdminDashboardApplicationsApplicationIdRoute
+  '/admin/dogs/new': typeof AdminDashboardDogsNewRoute
+  '/admin/applications': typeof AdminDashboardApplicationsIndexRoute
+  '/admin/dogs/$dogId/edit': typeof AdminDashboardDogsDogIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_marketing': typeof MarketingRouteRouteWithChildren
   '/admin': typeof AdminRouteRouteWithChildren
+  '/admin/_dashboard': typeof AdminDashboardRouteRouteWithChildren
   '/_marketing/about': typeof MarketingAboutRoute
   '/_marketing/application': typeof MarketingApplicationRoute
   '/_marketing/contact': typeof MarketingContactRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/setup': typeof AdminSetupRoute
   '/_marketing/': typeof MarketingIndexRoute
-  '/admin/': typeof AdminIndexRoute
+  '/admin/_dashboard/applications': typeof AdminDashboardApplicationsRouteRouteWithChildren
   '/_marketing/dogs/$dogId': typeof MarketingDogsDogIdRoute
+  '/admin/_dashboard/media': typeof AdminDashboardMediaRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/setup': typeof ApiAuthSetupRoute
-  '/api/images/$key': typeof ApiImagesKeyRoute
+  '/api/images/$': typeof ApiImagesSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/_marketing/dogs/': typeof MarketingDogsIndexRoute
+  '/admin/_dashboard/': typeof AdminDashboardIndexRoute
+  '/admin/_dashboard/applications/$applicationId': typeof AdminDashboardApplicationsApplicationIdRoute
+  '/admin/_dashboard/dogs/new': typeof AdminDashboardDogsNewRoute
+  '/admin/_dashboard/applications/': typeof AdminDashboardApplicationsIndexRoute
+  '/admin/_dashboard/dogs/$dogId/edit': typeof AdminDashboardDogsDogIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -168,48 +231,66 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/setup'
     | '/'
-    | '/admin/'
+    | '/admin/applications'
     | '/dogs/$dogId'
+    | '/admin/media'
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/setup'
-    | '/api/images/$key'
+    | '/api/images/$'
     | '/api/rpc/$'
     | '/dogs'
+    | '/admin/'
+    | '/admin/applications/$applicationId'
+    | '/admin/dogs/new'
+    | '/admin/applications/'
+    | '/admin/dogs/$dogId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/admin'
     | '/about'
     | '/application'
     | '/contact'
     | '/admin/login'
     | '/admin/setup'
     | '/'
-    | '/admin'
     | '/dogs/$dogId'
+    | '/admin/media'
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/setup'
-    | '/api/images/$key'
+    | '/api/images/$'
     | '/api/rpc/$'
     | '/dogs'
+    | '/admin/applications/$applicationId'
+    | '/admin/dogs/new'
+    | '/admin/applications'
+    | '/admin/dogs/$dogId/edit'
   id:
     | '__root__'
     | '/_marketing'
     | '/admin'
+    | '/admin/_dashboard'
     | '/_marketing/about'
     | '/_marketing/application'
     | '/_marketing/contact'
     | '/admin/login'
     | '/admin/setup'
     | '/_marketing/'
-    | '/admin/'
+    | '/admin/_dashboard/applications'
     | '/_marketing/dogs/$dogId'
+    | '/admin/_dashboard/media'
     | '/api/auth/login'
     | '/api/auth/logout'
     | '/api/auth/setup'
-    | '/api/images/$key'
+    | '/api/images/$'
     | '/api/rpc/$'
     | '/_marketing/dogs/'
+    | '/admin/_dashboard/'
+    | '/admin/_dashboard/applications/$applicationId'
+    | '/admin/_dashboard/dogs/new'
+    | '/admin/_dashboard/applications/'
+    | '/admin/_dashboard/dogs/$dogId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -218,7 +299,7 @@ export interface RootRouteChildren {
   ApiAuthLoginRoute: typeof ApiAuthLoginRoute
   ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
   ApiAuthSetupRoute: typeof ApiAuthSetupRoute
-  ApiImagesKeyRoute: typeof ApiImagesKeyRoute
+  ApiImagesSplatRoute: typeof ApiImagesSplatRoute
   ApiRpcSplatRoute: typeof ApiRpcSplatRoute
 }
 
@@ -237,13 +318,6 @@ declare module '@tanstack/react-router' {
       fullPath: ''
       preLoaderRoute: typeof MarketingRouteRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/admin/': {
-      id: '/admin/'
-      path: '/'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof AdminRouteRoute
     }
     '/_marketing/': {
       id: '/_marketing/'
@@ -287,6 +361,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingAboutRouteImport
       parentRoute: typeof MarketingRouteRoute
     }
+    '/admin/_dashboard': {
+      id: '/admin/_dashboard'
+      path: ''
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminDashboardRouteRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/_dashboard/': {
+      id: '/admin/_dashboard/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminDashboardIndexRouteImport
+      parentRoute: typeof AdminDashboardRouteRoute
+    }
     '/_marketing/dogs/': {
       id: '/_marketing/dogs/'
       path: '/dogs'
@@ -301,11 +389,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRpcSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/images/$key': {
-      id: '/api/images/$key'
-      path: '/api/images/$key'
-      fullPath: '/api/images/$key'
-      preLoaderRoute: typeof ApiImagesKeyRouteImport
+    '/api/images/$': {
+      id: '/api/images/$'
+      path: '/api/images/$'
+      fullPath: '/api/images/$'
+      preLoaderRoute: typeof ApiImagesSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/setup': {
@@ -329,12 +417,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/_dashboard/media': {
+      id: '/admin/_dashboard/media'
+      path: '/media'
+      fullPath: '/admin/media'
+      preLoaderRoute: typeof AdminDashboardMediaRouteImport
+      parentRoute: typeof AdminDashboardRouteRoute
+    }
     '/_marketing/dogs/$dogId': {
       id: '/_marketing/dogs/$dogId'
       path: '/dogs/$dogId'
       fullPath: '/dogs/$dogId'
       preLoaderRoute: typeof MarketingDogsDogIdRouteImport
       parentRoute: typeof MarketingRouteRoute
+    }
+    '/admin/_dashboard/applications': {
+      id: '/admin/_dashboard/applications'
+      path: '/applications'
+      fullPath: '/admin/applications'
+      preLoaderRoute: typeof AdminDashboardApplicationsRouteRouteImport
+      parentRoute: typeof AdminDashboardRouteRoute
+    }
+    '/admin/_dashboard/applications/': {
+      id: '/admin/_dashboard/applications/'
+      path: '/'
+      fullPath: '/admin/applications/'
+      preLoaderRoute: typeof AdminDashboardApplicationsIndexRouteImport
+      parentRoute: typeof AdminDashboardApplicationsRouteRoute
+    }
+    '/admin/_dashboard/dogs/new': {
+      id: '/admin/_dashboard/dogs/new'
+      path: '/dogs/new'
+      fullPath: '/admin/dogs/new'
+      preLoaderRoute: typeof AdminDashboardDogsNewRouteImport
+      parentRoute: typeof AdminDashboardRouteRoute
+    }
+    '/admin/_dashboard/applications/$applicationId': {
+      id: '/admin/_dashboard/applications/$applicationId'
+      path: '/$applicationId'
+      fullPath: '/admin/applications/$applicationId'
+      preLoaderRoute: typeof AdminDashboardApplicationsApplicationIdRouteImport
+      parentRoute: typeof AdminDashboardApplicationsRouteRoute
+    }
+    '/admin/_dashboard/dogs/$dogId/edit': {
+      id: '/admin/_dashboard/dogs/$dogId/edit'
+      path: '/dogs/$dogId/edit'
+      fullPath: '/admin/dogs/$dogId/edit'
+      preLoaderRoute: typeof AdminDashboardDogsDogIdEditRouteImport
+      parentRoute: typeof AdminDashboardRouteRoute
     }
   }
 }
@@ -361,16 +491,53 @@ const MarketingRouteRouteWithChildren = MarketingRouteRoute._addFileChildren(
   MarketingRouteRouteChildren,
 )
 
+interface AdminDashboardApplicationsRouteRouteChildren {
+  AdminDashboardApplicationsApplicationIdRoute: typeof AdminDashboardApplicationsApplicationIdRoute
+  AdminDashboardApplicationsIndexRoute: typeof AdminDashboardApplicationsIndexRoute
+}
+
+const AdminDashboardApplicationsRouteRouteChildren: AdminDashboardApplicationsRouteRouteChildren =
+  {
+    AdminDashboardApplicationsApplicationIdRoute:
+      AdminDashboardApplicationsApplicationIdRoute,
+    AdminDashboardApplicationsIndexRoute: AdminDashboardApplicationsIndexRoute,
+  }
+
+const AdminDashboardApplicationsRouteRouteWithChildren =
+  AdminDashboardApplicationsRouteRoute._addFileChildren(
+    AdminDashboardApplicationsRouteRouteChildren,
+  )
+
+interface AdminDashboardRouteRouteChildren {
+  AdminDashboardApplicationsRouteRoute: typeof AdminDashboardApplicationsRouteRouteWithChildren
+  AdminDashboardMediaRoute: typeof AdminDashboardMediaRoute
+  AdminDashboardIndexRoute: typeof AdminDashboardIndexRoute
+  AdminDashboardDogsNewRoute: typeof AdminDashboardDogsNewRoute
+  AdminDashboardDogsDogIdEditRoute: typeof AdminDashboardDogsDogIdEditRoute
+}
+
+const AdminDashboardRouteRouteChildren: AdminDashboardRouteRouteChildren = {
+  AdminDashboardApplicationsRouteRoute:
+    AdminDashboardApplicationsRouteRouteWithChildren,
+  AdminDashboardMediaRoute: AdminDashboardMediaRoute,
+  AdminDashboardIndexRoute: AdminDashboardIndexRoute,
+  AdminDashboardDogsNewRoute: AdminDashboardDogsNewRoute,
+  AdminDashboardDogsDogIdEditRoute: AdminDashboardDogsDogIdEditRoute,
+}
+
+const AdminDashboardRouteRouteWithChildren =
+  AdminDashboardRouteRoute._addFileChildren(AdminDashboardRouteRouteChildren)
+
 interface AdminRouteRouteChildren {
+  AdminDashboardRouteRoute: typeof AdminDashboardRouteRouteWithChildren
   AdminLoginRoute: typeof AdminLoginRoute
   AdminSetupRoute: typeof AdminSetupRoute
-  AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminDashboardRouteRoute: AdminDashboardRouteRouteWithChildren,
   AdminLoginRoute: AdminLoginRoute,
   AdminSetupRoute: AdminSetupRoute,
-  AdminIndexRoute: AdminIndexRoute,
 }
 
 const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
@@ -383,7 +550,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthLoginRoute: ApiAuthLoginRoute,
   ApiAuthLogoutRoute: ApiAuthLogoutRoute,
   ApiAuthSetupRoute: ApiAuthSetupRoute,
-  ApiImagesKeyRoute: ApiImagesKeyRoute,
+  ApiImagesSplatRoute: ApiImagesSplatRoute,
   ApiRpcSplatRoute: ApiRpcSplatRoute,
 }
 export const routeTree = rootRouteImport

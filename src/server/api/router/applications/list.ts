@@ -1,7 +1,7 @@
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import * as z from "zod";
 import { protectedProcedure } from "@/server/api/trpc";
-import { ApplicationTable } from "@/server/db/schema";
+import { ApplicationTable, DogTable } from "@/server/db/schema";
 import { Result } from "@/utils/result";
 
 const ListApplicationsSchema = z.object({
@@ -14,7 +14,22 @@ export const list = protectedProcedure.input(ListApplicationsSchema).query(async
 
   const result = await Result.tryCatchAsync(
     async () => {
-      let query = db.select().from(ApplicationTable).$dynamic();
+      let query = db
+        .select({
+          id: ApplicationTable.id,
+          dogId: ApplicationTable.dogId,
+          applicantName: ApplicationTable.applicantName,
+          email: ApplicationTable.email,
+          phone: ApplicationTable.phone,
+          address: ApplicationTable.address,
+          status: ApplicationTable.status,
+          createdAt: ApplicationTable.createdAt,
+          dogName: DogTable.name,
+        })
+        .from(ApplicationTable)
+        .leftJoin(DogTable, eq(ApplicationTable.dogId, DogTable.id))
+        .orderBy(desc(ApplicationTable.createdAt))
+        .$dynamic();
 
       if (input.status) {
         query = query.where(eq(ApplicationTable.status, input.status));

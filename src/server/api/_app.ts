@@ -5,12 +5,12 @@ import { create as createApplication } from "./router/applications/create";
 import { get as getApplication } from "./router/applications/get";
 import { list as listApplications } from "./router/applications/list";
 import { updateStatus } from "./router/applications/update-status";
-// Stats
-import { stats } from "./router/stats";
 // Dogs - Admin
 import { create } from "./router/dogs/admin/create";
 import { delete_ as deleteDog } from "./router/dogs/admin/delete";
 import { deleteImage } from "./router/dogs/admin/delete-image";
+import { getByIdAdmin } from "./router/dogs/admin/get";
+import { listAdmin } from "./router/dogs/admin/list";
 import { setPrimaryImage } from "./router/dogs/admin/set-primary-image";
 import { update } from "./router/dogs/admin/update";
 import { uploadImage } from "./router/dogs/admin/upload-image";
@@ -19,6 +19,10 @@ import { getById } from "./router/dogs/public/get";
 import { list } from "./router/dogs/public/list";
 // Hello
 import { greet } from "./router/hello/greet";
+// Media
+import { deleteMedia } from "./router/media/delete";
+import { listMedia } from "./router/media/list";
+// Stats
 import { stats } from "./router/stats";
 
 export const appRouter = router({
@@ -37,6 +41,8 @@ export const appRouter = router({
       uploadImage,
       deleteImage,
       setPrimaryImage,
+      list: listAdmin,
+      getById: getByIdAdmin,
     },
   },
   applications: {
@@ -45,8 +51,10 @@ export const appRouter = router({
     get: getApplication,
     updateStatus,
   },
-  contact: {
-    submit,
+  contact: {},
+  media: {
+    list: listMedia,
+    delete: deleteMedia,
   },
   stats,
 });

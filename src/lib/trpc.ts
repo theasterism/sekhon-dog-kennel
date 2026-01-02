@@ -4,7 +4,15 @@ import { createContext } from "@/server/api/trpc";
 import { QueryCache, QueryClient } from "@tanstack/react-query";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { getRequestHeaders } from "@tanstack/react-start/server";
-import { createTRPCClient, httpBatchLink, loggerLink, unstable_localLink } from "@trpc/client";
+import {
+  createTRPCClient,
+  httpBatchLink,
+  httpLink,
+  isNonJsonSerializable,
+  loggerLink,
+  splitLink,
+  unstable_localLink,
+} from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import superjson from "superjson";
 
@@ -30,17 +38,31 @@ export const makeTRPCClient = createIsomorphicFn()
     });
   })
   .client(() => {
+    const url = `${getBaseUrl()}/api/rpc`;
     return createTRPCClient<AppRouter>({
       links: [
         loggerLink({
           enabled: (op) => op.direction === "down" && op.result instanceof Error,
         }),
-        httpBatchLink({
-          transformer: superjson,
-          url: `${getBaseUrl()}/api/rpc`,
-          headers() {
-            return { "x-trpc-source": "tanstack-start-client" };
-          },
+        splitLink({
+          condition: (op) => isNonJsonSerializable(op.input),
+          true: httpLink({
+            url,
+            transformer: {
+              serialize: (data) => data,
+              deserialize: superjson.deserialize,
+            },
+            headers() {
+              return { "x-trpc-source": "tanstack-start-client" };
+            },
+          }),
+          false: httpBatchLink({
+            transformer: superjson,
+            url,
+            headers() {
+              return { "x-trpc-source": "tanstack-start-client" };
+            },
+          }),
         }),
       ],
     });

@@ -1,14 +1,17 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CheckCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { availableDogs } from "@/data/marketing";
+import { Spinner } from "@/components/ui/spinner";
 import { getAge } from "@/utils/age";
 import { capitalize } from "@/utils/format";
 
 export const Route = createFileRoute("/_marketing/dogs/$dogId")({
-  loader: ({ params }) => {
-    return availableDogs.find((d) => d.id === params.dogId);
+  loader: async ({ context, params }) => {
+    const { api, queryClient } = context;
+    await queryClient.ensureQueryData(api.dogs.public.getById.queryOptions({ id: params.dogId }));
   },
   component: RouteComponent,
 });
@@ -35,7 +38,46 @@ function HealthCard({ title, description }: { title: string; description: string
 }
 
 function RouteComponent() {
-  const data = Route.useLoaderData();
+  const { dogId } = Route.useParams();
+  const { api } = Route.useRouteContext();
+  const dogQuery = useQuery(api.dogs.public.getById.queryOptions({ id: dogId }));
+  const dog = dogQuery.data;
+
+  if (dogQuery.isLoading) {
+    return (
+      <div className="flex justify-center py-24">
+        <Spinner className="size-8" />
+      </div>
+    );
+  }
+
+  if (!dog) {
+    return (
+      <div className="py-24 text-center">
+        <h1 className="text-2xl font-semibold">Dog not found</h1>
+        <p className="text-muted-foreground mt-2">This dog may no longer be available.</p>
+        <Button className="mt-6" render={<Link to="/dogs" />}>
+          Browse Available Dogs
+        </Button>
+      </div>
+    );
+  }
+
+  // Sort images: primary first, then by display order
+  const sortedImages = [...dog.images].sort((a, b) => {
+    if (a.isPrimary && !b.isPrimary) return -1;
+    if (!a.isPrimary && b.isPrimary) return 1;
+    return (a.displayOrder ?? 0) - (b.displayOrder ?? 0);
+  });
+
+  const statusConfig = {
+    available: { label: "Available", color: "bg-green-500/10 text-green-600 border-green-500/20" },
+    reserved: { label: "Reserved", color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20" },
+    sold: { label: "Sold", color: "bg-red-500/10 text-red-600 border-red-500/20" },
+  };
+
+  const status = statusConfig[dog.status ?? "available"];
+
   return (
     <main className="py-16 flex flex-col md:flex-row gap-8 px-5 mx-auto max-w-7xl w-full">
       <div className="flex flex-col gap-8 md:w-2/5">
@@ -44,51 +86,60 @@ function RouteComponent() {
             Home
           </Link>
           <span className="text-muted-foreground">/</span>
-          <Link to="/" hash="available-dogs" className="hover:text-foreground transition-colors">
+          <Link to="/dogs" className="hover:text-foreground transition-colors">
             Available Dogs
           </Link>
           <span className="text-muted-foreground">/</span>
-          <span className="text-foreground font-medium">{data?.name}</span>
+          <span className="text-foreground font-medium">{dog.name}</span>
         </nav>
 
         <div className="flex flex-col gap-4">
-          <div className="w-full">
-            <img
-              src={data?.images[0]}
-              alt="Full width landscape"
-              className="w-full object-cover rounded-lg shadow-lg aspect-4/3"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <img
-              src={data?.images[1]}
-              alt="Grid image 1"
-              className="aspect-square w-full object-cover rounded-lg shadow-lg"
-            />
-            <img
-              src={data?.images[2]}
-              alt="Grid image 2"
-              className="aspect-square w-full object-cover rounded-lg shadow-lg"
-            />
-          </div>
+          {sortedImages[0] && (
+            <div className="w-full">
+              <img
+                src={`/api/images/${sortedImages[0].r2Key}`}
+                alt={dog.name}
+                className="w-full object-cover rounded-lg shadow-lg aspect-4/3"
+              />
+            </div>
+          )}
+          {sortedImages.length > 1 && (
+            <div className="grid grid-cols-2 gap-4">
+              {sortedImages.slice(1, 3).map((image) => (
+                <img
+                  key={image.id}
+                  src={`/api/images/${image.r2Key}`}
+                  alt={dog.name}
+                  className="aspect-square w-full object-cover rounded-lg shadow-lg"
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
+
       <div className="flex flex-col gap-8 md:w-3/5">
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between gap-4">
-            <h1 className="text-3xl lg:text-4xl font-semibold tracking-tight">{data?.name}</h1>
-            <Badge variant="outline">{data?.status}</Badge>
+            <h1 className="text-3xl lg:text-4xl font-semibold tracking-tight">{dog.name}</h1>
+            <Badge variant="outline" className={status.color}>
+              {status.label}
+            </Badge>
           </div>
-          <p className="text-lg text-muted-foreground font-light">{data?.breed}</p>
+          <p className="text-lg text-muted-foreground font-light">{dog.breed}</p>
         </div>
-        <p className="text-muted-foreground">{data?.description}</p>
+
+        {dog.description && <p className="text-muted-foreground">{dog.description}</p>}
 
         <Separator />
         <div className="grid grid-cols-2 gap-y-8 gap-x-4">
-          <StatItem label="Age" value={getAge(data?.dateOfBirth || new Date())} />
-          <StatItem label="Sex" value={capitalize(data?.gender || "")} />
-          <StatItem label="Color" value={data?.color || ""} />
-          <StatItem label="Size" value={`${capitalize(data?.size || "")} (${data?.weight} lbs)`} />
+          <StatItem label="Age" value={dog.dateOfBirth ? getAge(new Date(dog.dateOfBirth)) : "Unknown"} />
+          <StatItem label="Sex" value={dog.gender ? capitalize(dog.gender) : "Unknown"} />
+          <StatItem label="Color" value={dog.color || "Unknown"} />
+          <StatItem
+            label="Size"
+            value={dog.size ? `${capitalize(dog.size)}${dog.weight ? ` (${dog.weight} lbs)` : ""}` : "Unknown"}
+          />
         </div>
 
         {/* Health & Microchip Info */}
@@ -96,15 +147,15 @@ function RouteComponent() {
         <div className="flex flex-col gap-4">
           <h2 className="font-semibold text-lg">Health Information</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <HealthCard title="Vaccinations" description={data?.health.vaccinations.join(", ") || ""} />
-            <HealthCard title="Dewormed" description={`${data?.health.dewormings}x deworming treatments`} />
             <HealthCard
-              title="Vet Checked"
-              description={data?.health.vetChecked ? "Full veterinary examination" : "Pending"}
+              title="Vaccinations"
+              description={dog.vaccinations?.length ? dog.vaccinations.join(", ") : "Up to date"}
             />
+            <HealthCard title="Dewormed" description={`${dog.dewormings ?? 0}x deworming treatments`} />
+            <HealthCard title="Vet Checked" description={dog.vetChecked ? "Full veterinary examination" : "Pending"} />
             <HealthCard
               title="Microchipped"
-              description={data?.microchipped ? "Registered microchip included" : "Not microchipped"}
+              description={dog.microchipped ? "Registered microchip included" : "Not microchipped"}
             />
           </div>
         </div>
@@ -112,15 +163,20 @@ function RouteComponent() {
         <Separator />
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex flex-col gap-1">
-            <span className="text-xs ">Price</span>
-            <span className="text-2xl font-semibold">${data?.price?.toLocaleString()}</span>
+            <span className="text-xs">Price</span>
+            <span className="text-2xl font-semibold">
+              {dog.price ? `$${dog.price.toLocaleString()}` : "Contact for pricing"}
+            </span>
           </div>
-          <a
-            href={`/contact?dog=${data?.id}`}
-            className="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
-          >
-            Inquire About {data?.name}
-          </a>
+          {dog.status === "available" ? (
+            <Button size="lg" render={<Link to="/application" search={{ dogId: dog.id, dogName: dog.name }} />}>
+              Apply to Adopt {dog.name}
+            </Button>
+          ) : (
+            <Button size="lg" variant="secondary" disabled>
+              {dog.status === "reserved" ? "Currently Reserved" : "No Longer Available"}
+            </Button>
+          )}
         </div>
       </div>
     </main>

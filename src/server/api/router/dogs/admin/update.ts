@@ -58,7 +58,7 @@ export const update = protectedProcedure.input(UpdateDogSchema).mutation(async (
       };
     }
 
-    fields.publishedAt = Date.now();
+    fields.publishedAt = new Date();
   } else if (published === false) {
     fields.publishedAt = null;
   }
@@ -68,7 +68,10 @@ export const update = protectedProcedure.input(UpdateDogSchema).mutation(async (
       const [updated] = await db.update(DogTable).set(fields).where(eq(DogTable.id, id)).returning();
       return updated;
     },
-    (e) => ({ code: "DB_ERROR" as const, message: "Failed to update dog", cause: e }),
+    (e) => {
+      console.error("Failed to update dog:", e);
+      return { code: "DB_ERROR" as const, message: "Failed to update dog", cause: e };
+    },
   );
 
   if (result.isErr()) throw result.error;
