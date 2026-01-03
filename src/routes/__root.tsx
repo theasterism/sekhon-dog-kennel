@@ -16,7 +16,7 @@ const jsonLd = {
   "@type": "LocalBusiness",
   name: siteConfig.name,
   description: siteConfig.tagline,
-  url: siteConfig.url,
+  ...(siteConfig.url ? { url: siteConfig.url } : {}),
   telephone: siteConfig.contact.phone,
   address: {
     "@type": "PostalAddress",
@@ -40,7 +40,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       { property: "og:type", content: "website" },
       { property: "og:title", content: siteConfig.name },
       { property: "og:description", content: siteConfig.tagline },
-      { property: "og:url", content: siteConfig.url },
+      ...(siteConfig.url ? [{ property: "og:url", content: siteConfig.url }] : []),
       { property: "og:site_name", content: siteConfig.name },
       { property: "og:image", content: `${siteConfig.url}${siteConfig.ogImage}` },
       // Twitter
@@ -51,7 +51,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "canonical", href: siteConfig.url },
+      ...(siteConfig.url ? [{ rel: "canonical", href: siteConfig.url }] : []),
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
       { rel: "apple-touch-icon", href: "/logo192.png" },
     ],

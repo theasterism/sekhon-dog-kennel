@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "CLOUDFLARE_ENV=dev vite",
+    "dev": "CLOUDFLARE_ENV=dev vite --force",
     "build:dev": "CLOUDFLARE_ENV=dev vite build && tsc --noEmit",
     "build:prod": "vite build && tsc --noEmit",
     "typegen": "wrangler types",
