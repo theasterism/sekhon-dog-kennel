@@ -37,7 +37,8 @@ function ApplicationsPage() {
   const updateStatusMutation = useMutation({
     ...api.applications.updateStatus.mutationOptions(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["applications"] });
+      queryClient.invalidateQueries({ queryKey: api.applications.list.queryKey() });
+      queryClient.invalidateQueries({ queryKey: api.stats.queryKey() });
       toast.success("Application status updated");
     },
     onError: (error) => {

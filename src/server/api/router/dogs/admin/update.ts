@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import * as z from "zod";
 import { protectedProcedure } from "@/server/api/trpc";
 import { DogImageTable, DogTable } from "@/server/db/schema";
+import { logger } from "@/server/logger";
 import { Result } from "@/utils/result";
 
 const UpdateDogSchema = z.object({
@@ -69,7 +70,7 @@ export const update = protectedProcedure.input(UpdateDogSchema).mutation(async (
       return updated;
     },
     (e) => {
-      console.error("Failed to update dog:", e);
+      logger.exception("dog.update.failed", e, { dog_id: id });
       return { code: "DB_ERROR" as const, message: "Failed to update dog", cause: e };
     },
   );

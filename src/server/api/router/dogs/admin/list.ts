@@ -7,9 +7,9 @@ import { Result } from "@/utils/result";
 const ListDogsSchema = z.object({
   page: z.number().min(1).default(1),
   limit: z.number().min(1).max(100).default(10),
-  search: z.string().optional(),
-  status: z.enum(["available", "reserved", "sold"]).optional(),
-  published: z.boolean().optional(),
+  search: z.string().nullish(),
+  status: z.enum(["available", "reserved", "sold"]).nullish(),
+  published: z.boolean().nullish(),
 });
 
 export const listAdmin = protectedProcedure.input(ListDogsSchema).query(async ({ ctx, input }) => {

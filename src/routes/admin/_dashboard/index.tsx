@@ -40,6 +40,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
+import { broadcastInvalidate } from "@/lib/broadcast";
 import type { RouterOutputs } from "@/server/api/root";
 import { getAge } from "@/utils/age";
 
@@ -84,7 +85,9 @@ function RouteComponent() {
     ...api.dogs.admin.delete.mutationOptions(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: api.dogs.admin.list.queryKey() });
+      queryClient.invalidateQueries({ queryKey: api.dogs.public.list.queryKey() });
       queryClient.invalidateQueries({ queryKey: api.stats.queryKey() });
+      broadcastInvalidate([api.dogs.public.list.queryKey()]);
       toast.success("Dog deleted successfully");
       setDeleteDialogOpen(false);
       setDogToDelete(null);

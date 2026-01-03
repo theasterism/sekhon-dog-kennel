@@ -1,4 +1,5 @@
 import { env } from "cloudflare:workers";
+import { logger } from "@/server/logger";
 
 interface EmailOptions {
   to: string;
@@ -11,9 +12,11 @@ export async function sendEmail(options: EmailOptions): Promise<{ success: boole
   const apiKey = (env as { RESEND_API_KEY?: string }).RESEND_API_KEY;
 
   if (!apiKey) {
-    console.warn("RESEND_API_KEY not configured, skipping email");
+    logger.warn("email.skipped", { reason: "RESEND_API_KEY not configured", to: options.to, subject: options.subject });
     return { success: false, error: "Email not configured" };
   }
+
+  const startTime = Date.now();
 
   try {
     const response = await fetch("https://api.resend.com/emails", {
@@ -30,15 +33,33 @@ export async function sendEmail(options: EmailOptions): Promise<{ success: boole
       }),
     });
 
+    const duration_ms = Date.now() - startTime;
+
     if (!response.ok) {
-      const error = await response.text();
-      console.error("Failed to send email:", error);
-      return { success: false, error };
+      const errorText = await response.text();
+      logger.error("email.failed", {
+        to: options.to,
+        subject: options.subject,
+        status: response.status,
+        error_message: errorText,
+        duration_ms,
+      });
+      return { success: false, error: errorText };
     }
+
+    logger.info("email.sent", {
+      to: options.to,
+      subject: options.subject,
+      status: response.status,
+      duration_ms,
+    });
 
     return { success: true };
   } catch (error) {
-    console.error("Email send error:", error);
+    logger.exception("email.error", error, {
+      to: options.to,
+      subject: options.subject,
+    });
     return { success: false, error: String(error) };
   }
 }

@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { db } from "../db/client";
 import { UserTable } from "../db/schema";
+import { logger } from "../logger";
 import { getCurrentSession } from "./session";
 
 export type AuthError = { type: "DatabaseError"; message: string } | { type: "SessionError"; message: string };
@@ -28,10 +29,7 @@ async function getAuthStatusInternal(): Promise<AuthResult> {
       },
     };
   } catch (error) {
-    console.error("[Auth:getAuthStatus] Database/session error", {
-      error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
-    });
+    logger.exception("auth.status.failed", error);
     return {
       ok: false,
       error: { type: "DatabaseError", message: error instanceof Error ? error.message : String(error) },

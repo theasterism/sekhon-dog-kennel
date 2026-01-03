@@ -95,23 +95,16 @@ function RouteComponent() {
 
         <div className="flex flex-col gap-4">
           {sortedImages[0] && (
-            <div className="w-full">
-              <img
-                src={`/api/images/${sortedImages[0].r2Key}`}
-                alt={dog.name}
-                className="w-full object-cover rounded-lg shadow-lg aspect-4/3"
-              />
+            <div className="w-full aspect-4/3 rounded-lg overflow-hidden shadow-lg">
+              <img src={`/api/images/${sortedImages[0].r2Key}`} alt={dog.name} className="size-full object-cover" />
             </div>
           )}
           {sortedImages.length > 1 && (
             <div className="grid grid-cols-2 gap-4">
               {sortedImages.slice(1, 3).map((image) => (
-                <img
-                  key={image.id}
-                  src={`/api/images/${image.r2Key}`}
-                  alt={dog.name}
-                  className="aspect-square w-full object-cover rounded-lg shadow-lg"
-                />
+                <div key={image.id} className="aspect-square rounded-lg overflow-hidden shadow-lg">
+                  <img src={`/api/images/${image.r2Key}`} alt={dog.name} className="size-full object-cover" />
+                </div>
               ))}
             </div>
           )}

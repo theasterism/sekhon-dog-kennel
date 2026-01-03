@@ -43,12 +43,14 @@ export function AvailableDogsSection() {
                 className="flex flex-col gap-3 group scroll-mt-24"
               >
                 {dog.primaryImage ? (
-                  <img
-                    src={`/api/images/${dog.primaryImage}`}
-                    alt={dog.name}
-                    loading="lazy"
-                    className="w-full aspect-4/3 object-cover rounded-xl transition-transform ease-in-out group-hover:scale-[1.02] border border-border shadow-lg"
-                  />
+                  <div className="w-full aspect-4/3 rounded-xl overflow-hidden border border-border shadow-lg">
+                    <img
+                      src={`/api/images/${dog.primaryImage}`}
+                      alt={dog.name}
+                      loading="lazy"
+                      className="size-full object-cover transition-transform ease-in-out group-hover:scale-[1.02]"
+                    />
+                  </div>
                 ) : (
                   <div className="w-full aspect-4/3 rounded-xl border border-border shadow-lg bg-muted flex items-center justify-center text-muted-foreground">
                     No Image

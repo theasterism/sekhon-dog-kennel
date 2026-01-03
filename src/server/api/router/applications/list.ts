@@ -5,8 +5,8 @@ import { ApplicationTable, DogTable } from "@/server/db/schema";
 import { Result } from "@/utils/result";
 
 const ListApplicationsSchema = z.object({
-  status: z.enum(["pending", "approved", "rejected"]).optional(),
-  dogId: z.string().optional(),
+  status: z.enum(["pending", "approved", "rejected"]).nullish(),
+  dogId: z.string().nullish(),
 });
 
 export const list = protectedProcedure.input(ListApplicationsSchema).query(async ({ ctx, input }) => {

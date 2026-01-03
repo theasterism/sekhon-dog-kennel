@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import * as z from "zod";
+import { siteConfig } from "@/config/site";
 import { publicProcedure } from "@/server/api/trpc";
 import { ApplicationTable, DogTable } from "@/server/db/schema";
 import { sendEmail } from "@/server/email/send";
@@ -69,19 +70,19 @@ export const create = publicProcedure.input(CreateApplicationSchema).mutation(as
     dogName: dog.name,
   });
 
-  // Send to admin (you should configure ADMIN_EMAIL secret or hardcode)
+  // Send to admin (fire and forget - sendEmail logs its own errors)
   sendEmail({
-    to: "admin@sekhondogkennel.com",
+    to: siteConfig.contact.email,
     subject: adminEmail.subject,
     html: adminEmail.html,
-  }).catch((e) => console.error("Failed to send admin notification:", e));
+  });
 
   // Send confirmation to applicant
   sendEmail({
     to: input.email,
     subject: confirmationEmail.subject,
     html: confirmationEmail.html,
-  }).catch((e) => console.error("Failed to send confirmation email:", e));
+  });
 
   return result.value;
 });

@@ -5,13 +5,15 @@ import { protectedProcedure } from "@/server/api/trpc";
 export const listMedia = protectedProcedure
   .input(
     z.object({
-      cursor: z.string().optional(),
+      cursor: z.string().nullish(),
       limit: z.number().min(1).max(1000).default(500),
-      prefix: z.string().optional(),
+      prefix: z.string().nullish(),
     }),
   )
   .query(async ({ input }) => {
-    const { cursor, limit, prefix } = input;
+    const { limit } = input;
+    const cursor = input.cursor ?? undefined;
+    const prefix = input.prefix ?? undefined;
 
     const result = await env.BUCKET.list({
       cursor,

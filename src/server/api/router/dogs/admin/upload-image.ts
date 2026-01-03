@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import * as z from "zod";
 import { protectedProcedure } from "@/server/api/trpc";
 import { DogImageTable, DogTable } from "@/server/db/schema";
+import { logger } from "@/server/logger";
 import type { StorageAdapter } from "@/server/storage/adapter";
 import { ALLOWED_TYPES, MAX_FILE_SIZE } from "@/server/storage/r2";
 import { createId } from "@/server/utils";
@@ -126,7 +127,7 @@ export const uploadImage = protectedProcedure.input(z.instanceof(FormData)).muta
       return { imageId, r2Key };
     },
     (e) => {
-      console.error("Failed to upload image:", e);
+      logger.exception("image.upload.failed", e, { dogId, imageId, file_size: file.size, file_type: file.type });
       return { code: "UPLOAD_ERROR" as const, message: "Failed to upload image", cause: e };
     },
   );
