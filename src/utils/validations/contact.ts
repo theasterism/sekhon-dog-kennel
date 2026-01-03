@@ -8,4 +8,10 @@ export const ContactFormSchema = z.object({
     .string()
     .min(10, "Message must be at least 10 characters")
     .max(1000, "Message must be at most 1000 characters"),
+  // Spam protection fields
+  _hp: z.string().max(0).optional(), // Honeypot - must be empty
+  _ts: z.number().optional(), // Timestamp - form load time
 });
+
+// Minimum seconds before form can be submitted (bots submit instantly)
+export const MIN_FORM_TIME_SECONDS = 3;

@@ -1,6 +1,8 @@
 import { revalidateLogic, useForm } from "@tanstack/react-form";
+import { useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Mail, MapPin, PhoneCallIcon } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -17,10 +19,14 @@ export const Route = createFileRoute("/_marketing/contact")({
 
 function RouteComponent() {
   const { address, contact, maps } = siteConfig;
+  const { api } = Route.useRouteContext();
+  const [formLoadTime] = useState(() => Date.now());
 
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     `${address.street}, ${address.city}, ${address.province} ${address.postalCode}`,
   )}`;
+
+  const submitMutation = useMutation(api.contact.submit.mutationOptions());
 
   const form = useForm({
     defaultValues: {
@@ -28,16 +34,27 @@ function RouteComponent() {
       email: "",
       phone: "",
       message: "",
+      _hp: "",
+      _ts: formLoadTime,
     } as z.input<typeof ContactFormSchema>,
     validationLogic: revalidateLogic(),
     validators: {
       onChangeAsync: ContactFormSchema,
       onChangeAsyncDebounceMs: 500,
     },
-    onSubmit: ({ value }) => {
-      console.log("Contact form submitted:", value);
-      toast.success("Message sent!", { description: "We'll get back to you soon." });
-      form.reset();
+    onSubmit: async ({ value }) => {
+      try {
+        await submitMutation.mutateAsync({
+          ...value,
+          _ts: formLoadTime,
+        });
+        toast.success("Message sent!", { description: "We'll get back to you soon." });
+        form.reset();
+      } catch (error) {
+        toast.error("Failed to send message", {
+          description: error instanceof Error ? error.message : "Please try again.",
+        });
+      }
     },
   });
 
@@ -48,8 +65,8 @@ function RouteComponent() {
         <div className="flex flex-col gap-6">
           <h1 className="tracking-tight leading-tight text-4xl sm:text-5xl font-semibold text-pretty">Get in touch</h1>
           <p className="text-base text-muted-foreground leading-relaxed max-w-[72ch] w-full">
-            Have questions about our puppies or want to schedule a visit? We'd love to hear from you. Reach out by phone,
-            email, or stop by our kennel in Surrey, BC.
+            Have questions about our puppies or want to schedule a visit? We'd love to hear from you. Reach out by
+            phone, email, or stop by our kennel in Surrey, BC.
           </p>
         </div>
         <Separator />
@@ -60,7 +77,10 @@ function RouteComponent() {
             <PhoneCallIcon className="size-5 shrink-0 mt-0.5" />
             <div>
               <h3 className="font-semibold mb-0.5">Phone</h3>
-              <a href={`tel:${contact.phone}`} className="text-muted-foreground hover:text-foreground transition-colors">
+              <a
+                href={`tel:${contact.phone}`}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
                 {contact.phoneDisplay}
               </a>
               <p className="text-xs text-muted-foreground mt-1">Mon-Fri 9am-6pm</p>
@@ -71,7 +91,10 @@ function RouteComponent() {
               <Mail className="size-5 shrink-0 mt-0.5" />
               <div>
                 <h3 className="font-semibold mb-0.5">Email</h3>
-                <a href={`mailto:${contact.email}`} className="text-muted-foreground hover:text-foreground transition-colors">
+                <a
+                  href={`mailto:${contact.email}`}
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
                   {contact.email}
                 </a>
                 <p className="text-xs text-muted-foreground mt-1">We reply within 24hrs</p>
@@ -187,6 +210,22 @@ function RouteComponent() {
                     </Field>
                   );
                 }}
+              </form.Field>
+
+              {/* Honeypot field - hidden from users, bots will fill it */}
+              <form.Field name="_hp">
+                {(field) => (
+                  <div className="absolute -left-[9999px]" aria-hidden="true">
+                    <Input
+                      type="text"
+                      name="website"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
+                  </div>
+                )}
               </form.Field>
 
               <Field>

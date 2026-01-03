@@ -5,6 +5,8 @@ import { create as createApplication } from "./router/applications/create";
 import { get as getApplication } from "./router/applications/get";
 import { list as listApplications } from "./router/applications/list";
 import { updateStatus } from "./router/applications/update-status";
+// Contact
+import { submit as submitContact } from "./router/contact/submit";
 // Dogs - Admin
 import { create } from "./router/dogs/admin/create";
 import { delete_ as deleteDog } from "./router/dogs/admin/delete";
@@ -51,7 +53,9 @@ export const appRouter = router({
     get: getApplication,
     updateStatus,
   },
-  contact: {},
+  contact: {
+    submit: submitContact,
+  },
   media: {
     list: listMedia,
     delete: deleteMedia,

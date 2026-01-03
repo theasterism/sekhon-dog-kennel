@@ -13,7 +13,7 @@ export const siteConfig = {
   contact: {
     phone: "+17786816730",
     phoneDisplay: "(778) 681-6730",
-    email: "info@sekhondogkennel.com",
+    email: "jagsekhon00@gmail.com",
   },
   social: {
     instagram: "https://instagram.com/sekhon_kennel_canada",
