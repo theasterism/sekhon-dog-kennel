@@ -1,13 +1,14 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
 import { CheckCircleIcon, ClockIcon, MailIcon, PhoneIcon, XCircleIcon } from "lucide-react";
 import { toast } from "sonner";
 import * as z from "zod";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { RouterOutputs } from "@/server/api/root";
 
 type Application = RouterOutputs["applications"]["list"][number];
@@ -15,6 +16,21 @@ type Application = RouterOutputs["applications"]["list"][number];
 const searchSchema = z.object({
   status: z.enum(["pending", "approved", "rejected"]).optional(),
 });
+
+const statusItems = [
+  {
+    label: "Approved",
+    value: "approved",
+  },
+  {
+    label: "Pending",
+    value: "pending",
+  },
+  {
+    label: "Rejected",
+    value: "rejected",
+  },
+];
 
 export const Route = createFileRoute("/admin/_dashboard/applications/")({
   validateSearch: searchSchema,
@@ -29,29 +45,22 @@ export const Route = createFileRoute("/admin/_dashboard/applications/")({
 function ApplicationsPage() {
   const { api } = Route.useRouteContext();
   const { status } = Route.useSearch();
-  const queryClient = useQueryClient();
+  const navigate = Route.useNavigate();
 
   const applicationsQuery = useQuery(api.applications.list.queryOptions({ status }));
   const applications = applicationsQuery.data ?? [];
 
   const updateStatusMutation = useMutation({
     ...api.applications.updateStatus.mutationOptions(),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: api.applications.list.queryKey() });
-      queryClient.invalidateQueries({ queryKey: api.stats.queryKey() });
+    onSuccess: (_data, _vars, _, context) => {
+      context.client.invalidateQueries({ queryKey: api.applications.list.queryKey() });
+      context.client.invalidateQueries({ queryKey: api.stats.queryKey() });
       toast.success("Application status updated");
     },
     onError: (error) => {
       toast.error("Failed to update status", { description: error.message });
     },
   });
-
-  const statusCounts = {
-    all: applications.length,
-    pending: applications.filter((a) => a.status === "pending").length,
-    approved: applications.filter((a) => a.status === "approved").length,
-    rejected: applications.filter((a) => a.status === "rejected").length,
-  };
 
   return (
     <div className="flex flex-col gap-6 pb-10">
@@ -65,25 +74,23 @@ function ApplicationsPage() {
 
       {/* Status Tabs */}
       <div className="flex gap-2 flex-wrap">
-        <StatusTab label="All" count={statusCounts.all} active={!status} href="/admin/applications" />
-        <StatusTab
-          label="Pending"
-          count={statusCounts.pending}
-          active={status === "pending"}
-          href="/admin/applications?status=pending"
-        />
-        <StatusTab
-          label="Approved"
-          count={statusCounts.approved}
-          active={status === "approved"}
-          href="/admin/applications?status=approved"
-        />
-        <StatusTab
-          label="Rejected"
-          count={statusCounts.rejected}
-          active={status === "rejected"}
-          href="/admin/applications?status=rejected"
-        />
+        <Tabs
+          onValueChange={(v) =>
+            navigate({
+              search: () => ({
+                status: v === "all" ? undefined : v,
+              }),
+            })
+          }
+          value={status === undefined ? "all" : status}
+        >
+          <TabsList>
+            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="pending">Pending</TabsTrigger>
+            <TabsTrigger value="approved">Approved</TabsTrigger>
+            <TabsTrigger value="rejected">Rejected</TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
 
       {/* Applications List */}
@@ -110,28 +117,6 @@ function ApplicationsPage() {
         </div>
       )}
     </div>
-  );
-}
-
-function StatusTab({ label, count, active, href }: { label: string; count: number; active: boolean; href: string }) {
-  return (
-    <Link
-      to={href}
-      className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-        active
-          ? "bg-primary text-primary-foreground"
-          : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
-      }`}
-    >
-      {label}
-      <span
-        className={`rounded-full px-2 py-0.5 text-xs ${
-          active ? "bg-primary-foreground/20 text-primary-foreground" : "bg-background"
-        }`}
-      >
-        {count}
-      </span>
-    </Link>
   );
 }
 
@@ -192,6 +177,7 @@ function ApplicationCard({
 
           <div className="flex items-center gap-2">
             <Select
+              items={statusItems}
               value={application.status ?? "pending"}
               onValueChange={(value) => onStatusChange(value as "pending" | "approved" | "rejected")}
               disabled={isUpdating}
@@ -200,9 +186,13 @@ function ApplicationCard({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="approved">Approved</SelectItem>
-                <SelectItem value="rejected">Rejected</SelectItem>
+                <SelectGroup>
+                  {statusItems.map((i) => (
+                    <SelectItem key={i.value} value={i.value}>
+                      {i.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </div>

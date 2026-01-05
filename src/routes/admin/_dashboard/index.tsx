@@ -1,5 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { type ColumnDef } from "@tanstack/react-table";
 import {
   ChevronLeftIcon,
@@ -43,25 +43,26 @@ import { Spinner } from "@/components/ui/spinner";
 import { broadcastInvalidate } from "@/lib/broadcast";
 import type { RouterOutputs } from "@/server/api/root";
 import { getAge } from "@/utils/age";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type Dog = RouterOutputs["dogs"]["admin"]["list"]["items"][number];
 
 const searchSchema = z.object({
   page: z.number().min(1).optional().catch(1),
-  search: z.string().optional(),
+  query: z.string().optional(),
   status: z.enum(["available", "reserved", "sold"]).optional(),
 });
 
 export const Route = createFileRoute("/admin/_dashboard/")({
-  validateSearch: searchSchema,
-  loaderDeps: ({ search }) => ({ page: search.page ?? 1, search: search.search, status: search.status }),
+  validateSearch: (search) => searchSchema.parse(search),
+  loaderDeps: ({ search }) => ({ page: search.page ?? 1, query: search.query, status: search.status }),
   loader: async ({ context, deps }) => {
     const { api, queryClient } = context;
 
     await Promise.all([
       queryClient.ensureQueryData(api.stats.queryOptions()),
       queryClient.ensureQueryData(
-        api.dogs.admin.list.queryOptions({ page: deps.page, limit: 10, search: deps.search, status: deps.status }),
+        api.dogs.admin.list.queryOptions({ page: deps.page, limit: 10, search: deps.query, status: deps.status }),
       ),
     ]);
   },
@@ -70,23 +71,22 @@ export const Route = createFileRoute("/admin/_dashboard/")({
 
 function RouteComponent() {
   const { api } = Route.useRouteContext();
-  const { page = 1, search, status } = Route.useSearch();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const [searchInput, setSearchInput] = useState(search ?? "");
+  const { page = 1, query, status } = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const [searchInput, setSearchInput] = useState(query ?? "");
 
   const statQuery = useQuery(api.stats.queryOptions());
-  const dogsQuery = useQuery(api.dogs.admin.list.queryOptions({ page, limit: 10, search, status }));
+  const dogsQuery = useQuery(api.dogs.admin.list.queryOptions({ page, limit: 10, search: query, status }));
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [dogToDelete, setDogToDelete] = useState<Dog | null>(null);
 
   const deleteMutation = useMutation({
     ...api.dogs.admin.delete.mutationOptions(),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: api.dogs.admin.list.queryKey() });
-      queryClient.invalidateQueries({ queryKey: api.dogs.public.list.queryKey() });
-      queryClient.invalidateQueries({ queryKey: api.stats.queryKey() });
+    onSuccess: (_data, _vars, _, context) => {
+      context.client.invalidateQueries({ queryKey: api.dogs.admin.list.queryKey() });
+      context.client.invalidateQueries({ queryKey: api.dogs.public.list.queryKey() });
+      context.client.invalidateQueries({ queryKey: api.stats.queryKey() });
       broadcastInvalidate([api.dogs.public.list.queryKey()]);
       toast.success("Dog deleted successfully");
       setDeleteDialogOpen(false);
@@ -102,18 +102,12 @@ function RouteComponent() {
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    navigate({ to: ".", search: { page: 1, search: searchInput || undefined, status } });
+    navigate({ to: ".", search: { page: 1, query: searchInput || undefined, status } });
   }
 
   function clearSearch() {
     setSearchInput("");
     navigate({ to: ".", search: { page: 1, status } });
-  }
-
-  function handleStatusChange(newStatus: string | null) {
-    if (!newStatus) return;
-    const statusValue = newStatus === "all" ? undefined : (newStatus as "available" | "reserved" | "sold");
-    navigate({ to: ".", search: { page: 1, search, status: statusValue } });
   }
 
   const columns: ColumnDef<Dog>[] = [
@@ -128,15 +122,12 @@ function RouteComponent() {
             params={{ dogId: dog.id }}
             className="flex items-center gap-3 hover:underline"
           >
-            <div className="size-10 rounded-lg bg-muted flex-shrink-0 overflow-hidden">
-              {dog.primaryImage ? (
-                <img src={`/api/images/${dog.primaryImage}`} alt={dog.name} className="size-full object-cover" />
-              ) : (
-                <div className="size-full flex items-center justify-center">
-                  <DogIcon className="size-5 text-muted-foreground" />
-                </div>
-              )}
-            </div>
+            <Avatar className="size-10 rounded-sm after:rounded-sm bg-muted flex-shrink-0 overflow-hidden">
+              <AvatarImage className="rounded-sm" src={`/api/imags/${dog.primaryImage}`} alt={dog.name} />
+              <AvatarFallback className="rounded-sm ">
+                <DogIcon className="size-5 text-muted-foreground" />
+              </AvatarFallback>
+            </Avatar>
             <span className="font-medium">{dog.name}</span>
           </Link>
         );
@@ -164,33 +155,34 @@ function RouteComponent() {
     },
     {
       id: "actions",
-      header: "",
       cell: ({ row }) => {
         const dog = row.original;
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger render={<Button variant="ghost" size="icon-xs" />}>
-              <MoreHorizontalIcon className="size-4" />
-              <span className="sr-only">Open menu</span>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem render={<Link to="/admin/dogs/$dogId/edit" params={{ dogId: dog.id }} />}>
-                <PencilIcon />
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                variant="destructive"
-                onClick={() => {
-                  setDogToDelete(dog);
-                  setDeleteDialogOpen(true);
-                }}
-              >
-                <Trash2Icon />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex justify-end">
+            <DropdownMenu>
+              <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" />}>
+                <MoreHorizontalIcon className="size-4" />
+                <span className="sr-only">Open menu</span>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem render={<Link to="/admin/dogs/$dogId/edit" params={{ dogId: dog.id }} />}>
+                  <PencilIcon />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  variant="destructive"
+                  onClick={() => {
+                    setDogToDelete(dog);
+                    setDeleteDialogOpen(true);
+                  }}
+                >
+                  <Trash2Icon />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         );
       },
     },
@@ -216,11 +208,11 @@ function RouteComponent() {
   ];
 
   return (
-    <div className="flex max-w-7xl flex-col gap-8 mx-auto px-5 w-full pb-10">
+    <div className="flex max-w-5xl flex-col gap-8 mx-auto px-5 w-full pb-10">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-semibold tracking-tight">Dogs</h1>
-        <Button render={<Link to="/admin/dogs/new" />}>
+        <Button nativeButton={false} render={<Link to="/admin/dogs/new" />}>
           <PlusIcon data-icon="inline-start" />
           Add Dog
         </Button>
@@ -263,7 +255,7 @@ function RouteComponent() {
               onChange={(e) => setSearchInput(e.target.value)}
               className="pl-9"
             />
-            {search && (
+            {query && (
               <button
                 type="button"
                 onClick={clearSearch}
@@ -278,7 +270,19 @@ function RouteComponent() {
           </Button>
         </form>
 
-        <Select value={status} onValueChange={handleStatusChange}>
+        <Select
+          value={status}
+          onValueChange={(value) =>
+            navigate({
+              search: {
+                page: page,
+                query: query || undefined,
+                status: value === null ? undefined : (value as "available" | "reserved" | "sold"),
+              },
+            })
+          }
+          items={items}
+        >
           <SelectTrigger className="w-full sm:w-40">
             <SelectValue />
           </SelectTrigger>
@@ -313,7 +317,7 @@ function RouteComponent() {
                 variant="outline"
                 size="icon-sm"
                 disabled={page <= 1}
-                onClick={() => navigate({ to: ".", search: { page: page - 1, search, status } })}
+                onClick={() => navigate({ to: ".", search: { page: page - 1, query, status } })}
               >
                 <ChevronLeftIcon />
               </Button>
@@ -321,7 +325,7 @@ function RouteComponent() {
                 variant="outline"
                 size="icon-sm"
                 disabled={page >= dogsData.totalPages}
-                onClick={() => navigate({ to: ".", search: { page: page + 1, search, status } })}
+                onClick={() => navigate({ to: ".", search: { page: page + 1, query, status } })}
               >
                 <ChevronRightIcon />
               </Button>
@@ -358,14 +362,14 @@ function RouteComponent() {
 
 function StatusBadge({ status, published }: { status: string | null; published: boolean }) {
   if (!published) {
-    return <Badge variant="secondary">Draft</Badge>;
+    return <Badge variant="outline">Draft</Badge>;
   }
 
   switch (status) {
     case "available":
-      return <Badge variant="default">Available</Badge>;
+      return <Badge variant="outline">Available</Badge>;
     case "reserved":
-      return <Badge variant="secondary">Reserved</Badge>;
+      return <Badge variant="outline">Reserved</Badge>;
     case "sold":
       return <Badge variant="outline">Sold</Badge>;
     default:

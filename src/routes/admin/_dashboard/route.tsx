@@ -17,10 +17,6 @@ const routes = linkOptions([
     to: "/admin/applications",
     label: "Applications",
   },
-  {
-    to: "/admin/media",
-    label: "Media",
-  },
 ]);
 
 function LogoutButton() {
@@ -74,6 +70,7 @@ function RouteComponent() {
                     }}
                     activeOptions={{
                       exact: true,
+                      includeSearch: false,
                     }}
                     to={route.to}
                   >

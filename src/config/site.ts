@@ -1,5 +1,5 @@
 export const siteConfig = {
-  name: "Sekhon Dog Kennel",
+  name: "Sekhon Kennel",
   tagline: "Surrey, BC's trusted family-owned kennel, raising happy, healthy puppies with love and care.",
   url: "", // TODO: Add production URL when domain is ready
   ogImage: "/images/hero-puppies.png",

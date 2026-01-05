@@ -29,10 +29,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { Toggle } from "@/components/ui/toggle";
@@ -120,7 +121,7 @@ function RouteComponent() {
   }
 
   return (
-    <div className="flex max-w-4xl flex-col gap-8 mx-auto px-5 w-full pb-10">
+    <div className="flex max-w-5xl flex-col gap-8 mx-auto px-5 w-full pb-10">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
@@ -279,10 +280,10 @@ function ImageGallery({ dogId, images }: { dogId: string; images: DogData["image
           {images.map((image) => (
             <div key={image.id} className="relative group aspect-square rounded-lg overflow-hidden bg-muted">
               <img src={`/api/images/${image.r2Key}`} alt="" className="size-full object-cover" />
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                 <Button
                   variant="secondary"
-                  size="icon-xs"
+                  size="icon-sm"
                   onClick={() => setPrimaryMutation.mutate({ imageId: image.id })}
                   disabled={image.isPrimary ?? false}
                   title="Set as primary"
@@ -291,7 +292,7 @@ function ImageGallery({ dogId, images }: { dogId: string; images: DogData["image
                 </Button>
                 <Button
                   variant="destructive"
-                  size="icon-xs"
+                  size="icon-sm"
                   onClick={() => deleteImageMutation.mutate({ imageId: image.id })}
                   title="Delete"
                 >
@@ -462,8 +463,6 @@ function DogForm({
                               }
                             }}
                             captionLayout="dropdown"
-                            fromYear={2015}
-                            toYear={new Date().getFullYear()}
                             defaultMonth={dateValue}
                           />
                         </PopoverContent>
@@ -474,25 +473,41 @@ function DogForm({
               </form.Field>
 
               <form.Field name="gender">
-                {(field) => (
-                  <Field>
-                    <FieldLabel>Gender</FieldLabel>
-                    <Select
-                      value={field.state.value ?? ""}
-                      onValueChange={(v) => field.handleChange(v as "male" | "female")}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue>
-                          {field.state.value ? (field.state.value === "male" ? "Male" : "Female") : "Select gender"}
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </Field>
-                )}
+                {(field) => {
+                  const genderList = [
+                    {
+                      label: "Male",
+                      value: "male",
+                    },
+                    {
+                      label: "Female",
+                      value: "female",
+                    },
+                  ];
+
+                  return (
+                    <Field>
+                      <FieldLabel>Gender</FieldLabel>
+                      <Select
+                        items={genderList}
+                        value={field.state.value ?? ""}
+                        onValueChange={(v) => field.handleChange(v as "male" | "female")}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue>
+                            {field.state.value ? (field.state.value === "male" ? "Male" : "Female") : "Select gender"}
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectItem value="male">Male</SelectItem>
+                            <SelectItem value="female">Female</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                  );
+                }}
               </form.Field>
 
               <form.Field name="size">
@@ -511,9 +526,11 @@ function DogForm({
                         </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="small">Small</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="large">Large</SelectItem>
+                        <SelectGroup>
+                          <SelectItem value="small">Small</SelectItem>
+                          <SelectItem value="medium">Medium</SelectItem>
+                          <SelectItem value="large">Large</SelectItem>
+                        </SelectGroup>
                       </SelectContent>
                     </Select>
                   </Field>
@@ -559,12 +576,18 @@ function DogForm({
                       onValueChange={(v) => field.handleChange(v as "available" | "reserved" | "sold")}
                     >
                       <SelectTrigger className="w-full">
-                        <SelectValue />
+                        <SelectValue>
+                          {field.state.value
+                            ? field.state.value.charAt(0).toUpperCase() + field.state.value.slice(1)
+                            : "Select status"}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="available">Available</SelectItem>
-                        <SelectItem value="reserved">Reserved</SelectItem>
-                        <SelectItem value="sold">Sold</SelectItem>
+                        <SelectGroup>
+                          <SelectItem value="available">Available</SelectItem>
+                          <SelectItem value="reserved">Reserved</SelectItem>
+                          <SelectItem value="sold">Sold</SelectItem>
+                        </SelectGroup>
                       </SelectContent>
                     </Select>
                   </Field>
@@ -643,11 +666,9 @@ function DogForm({
                   {(field) => (
                     <Field>
                       <label className="flex items-center gap-3 cursor-pointer">
-                        <input
-                          type="checkbox"
+                        <Checkbox
                           checked={field.state.value ?? false}
-                          onChange={(e) => field.handleChange(e.target.checked)}
-                          className="size-4 rounded border-input"
+                          onCheckedChange={(checked) => field.handleChange(checked === true)}
                         />
                         <span className="text-sm font-medium">Vet Checked</span>
                       </label>
@@ -660,11 +681,9 @@ function DogForm({
                   {(field) => (
                     <Field>
                       <label className="flex items-center gap-3 cursor-pointer">
-                        <input
-                          type="checkbox"
+                        <Checkbox
                           checked={field.state.value ?? false}
-                          onChange={(e) => field.handleChange(e.target.checked)}
-                          className="size-4 rounded border-input"
+                          onCheckedChange={(checked) => field.handleChange(checked === true)}
                         />
                         <span className="text-sm font-medium">Microchipped</span>
                       </label>

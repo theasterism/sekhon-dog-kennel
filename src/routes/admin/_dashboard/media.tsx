@@ -18,8 +18,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import { Toggle } from "@/components/ui/toggle";
 import type { RouterOutputs } from "@/server/api/root";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 type MediaItem = RouterOutputs["media"]["list"]["items"][number];
 
@@ -103,46 +103,35 @@ function MediaPage() {
   };
 
   return (
-    <div className="flex flex-col gap-4 px-5 pb-10">
+    <div className="flex flex-col max-w-5xl w-full mx-auto gap-4 px-5 pb-10">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Media Library</h1>
           <p className="text-muted-foreground text-sm">Browse and manage uploaded files</p>
         </div>
-        <div className="flex items-center gap-1 rounded-md border p-1">
-          <Toggle
-            size="sm"
+        <ToggleGroup variant="outline">
+          <ToggleGroupItem
             pressed={currentView === "grid"}
             onPressedChange={() => toggleView("grid")}
-            className="h-7 w-7 p-0"
             aria-label="Grid view"
           >
             <GridIcon className="size-4" />
-          </Toggle>
-          <Toggle
-            size="sm"
+          </ToggleGroupItem>
+          <ToggleGroupItem
             pressed={currentView === "list"}
             onPressedChange={() => toggleView("list")}
-            className="h-7 w-7 p-0"
             aria-label="List view"
           >
             <ListIcon className="size-4" />
-          </Toggle>
-        </div>
+          </ToggleGroupItem>
+        </ToggleGroup>
       </div>
 
       {/* Breadcrumb Navigation */}
       <nav className="flex items-center gap-1 text-sm">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-7 gap-1 px-2"
-          onClick={() => navigateToFolder("")}
-          disabled={!currentPath}
-        >
+        <Button variant="ghost" size="sm" onClick={() => navigateToFolder("")} disabled={!currentPath}>
           <HomeIcon className="size-4" />
-          Root
         </Button>
         {breadcrumbs.map((crumb, index) => (
           <div key={crumb.path} className="flex items-center gap-1">
@@ -150,7 +139,6 @@ function MediaPage() {
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 px-2"
               onClick={() => navigateToFolder(crumb.path)}
               disabled={index === breadcrumbs.length - 1}
             >
@@ -161,8 +149,8 @@ function MediaPage() {
       </nav>
 
       {/* Content */}
-      <Card>
-        <CardContent className="p-0">
+      <Card className="p-0">
+        <CardContent className="px-0">
           {mediaQuery.isLoading ? (
             <div className="flex justify-center py-12">
               <Spinner className="size-8" />
@@ -175,15 +163,16 @@ function MediaPage() {
             <div className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
               {listItems.map((item) =>
                 item.type === "folder" ? (
-                  <button
+                  <Button
                     key={item.path}
                     type="button"
+                    variant="ghost"
                     onClick={() => navigateToFolder(item.path)}
-                    className="group flex flex-col items-center gap-2 rounded-lg p-3 text-center transition-colors hover:bg-muted/50"
+                    className="group flex flex-col items-center gap-2 h-auto text-center aspect-square"
                   >
-                    <FolderIcon className="size-16 fill-blue-100 text-blue-500" />
+                    <FolderIcon className="size-10 text-primary" />
                     <p className="w-full truncate text-sm font-medium">{item.name}</p>
-                  </button>
+                  </Button>
                 ) : (
                   <div key={item.key} className="group relative aspect-square overflow-hidden rounded-lg bg-muted">
                     <img

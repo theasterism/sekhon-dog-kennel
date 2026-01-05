@@ -30,7 +30,6 @@ import { Route as MarketingDogsDogIdRouteImport } from './routes/_marketing/dogs
 import { Route as AdminDashboardApplicationsRouteRouteImport } from './routes/admin/_dashboard/applications/route'
 import { Route as AdminDashboardApplicationsIndexRouteImport } from './routes/admin/_dashboard/applications/index'
 import { Route as AdminDashboardDogsNewRouteImport } from './routes/admin/_dashboard/dogs/new'
-import { Route as AdminDashboardApplicationsApplicationIdRouteImport } from './routes/admin/_dashboard/applications/$applicationId'
 import { Route as AdminDashboardDogsDogIdEditRouteImport } from './routes/admin/_dashboard/dogs/$dogId.edit'
 
 const AdminRouteRoute = AdminRouteRouteImport.update({
@@ -138,12 +137,6 @@ const AdminDashboardDogsNewRoute = AdminDashboardDogsNewRouteImport.update({
   path: '/dogs/new',
   getParentRoute: () => AdminDashboardRouteRoute,
 } as any)
-const AdminDashboardApplicationsApplicationIdRoute =
-  AdminDashboardApplicationsApplicationIdRouteImport.update({
-    id: '/$applicationId',
-    path: '/$applicationId',
-    getParentRoute: () => AdminDashboardApplicationsRouteRoute,
-  } as any)
 const AdminDashboardDogsDogIdEditRoute =
   AdminDashboardDogsDogIdEditRouteImport.update({
     id: '/dogs/$dogId/edit',
@@ -169,7 +162,6 @@ export interface FileRoutesByFullPath {
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/dogs': typeof MarketingDogsIndexRoute
   '/admin/': typeof AdminDashboardIndexRoute
-  '/admin/applications/$applicationId': typeof AdminDashboardApplicationsApplicationIdRoute
   '/admin/dogs/new': typeof AdminDashboardDogsNewRoute
   '/admin/applications/': typeof AdminDashboardApplicationsIndexRoute
   '/admin/dogs/$dogId/edit': typeof AdminDashboardDogsDogIdEditRoute
@@ -190,7 +182,6 @@ export interface FileRoutesByTo {
   '/api/images/$': typeof ApiImagesSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/dogs': typeof MarketingDogsIndexRoute
-  '/admin/applications/$applicationId': typeof AdminDashboardApplicationsApplicationIdRoute
   '/admin/dogs/new': typeof AdminDashboardDogsNewRoute
   '/admin/applications': typeof AdminDashboardApplicationsIndexRoute
   '/admin/dogs/$dogId/edit': typeof AdminDashboardDogsDogIdEditRoute
@@ -216,7 +207,6 @@ export interface FileRoutesById {
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/_marketing/dogs/': typeof MarketingDogsIndexRoute
   '/admin/_dashboard/': typeof AdminDashboardIndexRoute
-  '/admin/_dashboard/applications/$applicationId': typeof AdminDashboardApplicationsApplicationIdRoute
   '/admin/_dashboard/dogs/new': typeof AdminDashboardDogsNewRoute
   '/admin/_dashboard/applications/': typeof AdminDashboardApplicationsIndexRoute
   '/admin/_dashboard/dogs/$dogId/edit': typeof AdminDashboardDogsDogIdEditRoute
@@ -241,7 +231,6 @@ export interface FileRouteTypes {
     | '/api/rpc/$'
     | '/dogs'
     | '/admin/'
-    | '/admin/applications/$applicationId'
     | '/admin/dogs/new'
     | '/admin/applications/'
     | '/admin/dogs/$dogId/edit'
@@ -262,7 +251,6 @@ export interface FileRouteTypes {
     | '/api/images/$'
     | '/api/rpc/$'
     | '/dogs'
-    | '/admin/applications/$applicationId'
     | '/admin/dogs/new'
     | '/admin/applications'
     | '/admin/dogs/$dogId/edit'
@@ -287,7 +275,6 @@ export interface FileRouteTypes {
     | '/api/rpc/$'
     | '/_marketing/dogs/'
     | '/admin/_dashboard/'
-    | '/admin/_dashboard/applications/$applicationId'
     | '/admin/_dashboard/dogs/new'
     | '/admin/_dashboard/applications/'
     | '/admin/_dashboard/dogs/$dogId/edit'
@@ -452,13 +439,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardDogsNewRouteImport
       parentRoute: typeof AdminDashboardRouteRoute
     }
-    '/admin/_dashboard/applications/$applicationId': {
-      id: '/admin/_dashboard/applications/$applicationId'
-      path: '/$applicationId'
-      fullPath: '/admin/applications/$applicationId'
-      preLoaderRoute: typeof AdminDashboardApplicationsApplicationIdRouteImport
-      parentRoute: typeof AdminDashboardApplicationsRouteRoute
-    }
     '/admin/_dashboard/dogs/$dogId/edit': {
       id: '/admin/_dashboard/dogs/$dogId/edit'
       path: '/dogs/$dogId/edit'
@@ -492,14 +472,11 @@ const MarketingRouteRouteWithChildren = MarketingRouteRoute._addFileChildren(
 )
 
 interface AdminDashboardApplicationsRouteRouteChildren {
-  AdminDashboardApplicationsApplicationIdRoute: typeof AdminDashboardApplicationsApplicationIdRoute
   AdminDashboardApplicationsIndexRoute: typeof AdminDashboardApplicationsIndexRoute
 }
 
 const AdminDashboardApplicationsRouteRouteChildren: AdminDashboardApplicationsRouteRouteChildren =
   {
-    AdminDashboardApplicationsApplicationIdRoute:
-      AdminDashboardApplicationsApplicationIdRoute,
     AdminDashboardApplicationsIndexRoute: AdminDashboardApplicationsIndexRoute,
   }
 

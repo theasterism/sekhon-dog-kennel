@@ -128,7 +128,7 @@ function RouteComponent() {
         <div className="grid grid-cols-2 gap-y-8 gap-x-4">
           <StatItem label="Age" value={dog.dateOfBirth ? getAge(new Date(dog.dateOfBirth)) : "Unknown"} />
           <StatItem label="Sex" value={dog.gender ? capitalize(dog.gender) : "Unknown"} />
-          <StatItem label="Color" value={dog.color || "Unknown"} />
+          <StatItem label="Color" value={`${dog.color?.charAt(0).toUpperCase() + dog.color?.slice(1)}` || "Unknown"} />
           <StatItem
             label="Size"
             value={dog.size ? `${capitalize(dog.size)}${dog.weight ? ` (${dog.weight} lbs)` : ""}` : "Unknown"}

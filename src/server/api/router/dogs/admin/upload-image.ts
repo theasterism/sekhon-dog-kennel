@@ -27,8 +27,7 @@ async function optimizeAndStore(
     .input(inputStream)
     .transform({
       width: maxDimension,
-      height: maxDimension,
-      fit: "scale-down",
+      fit: "cover",
     })
     .output({
       format: "image/webp",
