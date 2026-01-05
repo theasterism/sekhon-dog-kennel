@@ -176,12 +176,20 @@ function RouteComponent() {
 function PublishToggle({ dog, onPublish }: { dog: DogData; onPublish: (published: boolean) => void }) {
   const isPublished = !!dog.publishedAt;
 
+  const handlePublish = (pressed: boolean) => {
+    if (pressed && dog.images.length === 0) {
+      toast.error("Cannot publish without at least one image");
+      return;
+    }
+    onPublish(pressed);
+  };
+
   return (
     <Toggle
       variant="outline"
       size="sm"
       pressed={isPublished}
-      onPressedChange={(pressed) => onPublish(pressed)}
+      onPressedChange={handlePublish}
       className="gap-2 data-[state=on]:bg-green-500/10 data-[state=on]:text-green-600 data-[state=on]:border-green-500/30"
     >
       {isPublished ? (

@@ -72,7 +72,7 @@ function RouteComponent() {
                       />
                     </CardContent>
                   ) : (
-                    <div className="w-full aspect-4/3 rounded-xl border border-border shadow-lg bg-muted flex items-center justify-center text-muted-foreground">
+                    <div className="aspect-square rounded-lg w-full h-full border border-border shadow-lg bg-muted flex items-center justify-center text-muted-foreground">
                       No Image
                     </div>
                   )}

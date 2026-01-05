@@ -44,7 +44,7 @@ export function AvailableDogsSection() {
                 params={{ dogId: dog.id }}
                 className="flex flex-col gap-3 group scroll-mt-24"
               >
-                <Card className="w-full rounded-none p-0 bg-transparent border-0 ring-0 shadow-none gap-4 min-w-0">
+                <Card className="w-full h-auto rounded-none p-0 bg-transparent border-0 ring-0 shadow-none gap-4 min-w-0">
                   {dog.primaryImage ? (
                     <CardContent className="p-0 overflow-hidden">
                       <img
@@ -55,7 +55,7 @@ export function AvailableDogsSection() {
                       />
                     </CardContent>
                   ) : (
-                    <div className="w-full aspect-4/3 rounded-xl border border-border shadow-lg bg-muted flex items-center justify-center text-muted-foreground">
+                    <div className="aspect-square rounded-lg w-full h-full border border-border shadow-lg bg-muted flex items-center justify-center text-muted-foreground block">
                       No Image
                     </div>
                   )}
