@@ -22,6 +22,12 @@ export function HeroSection() {
           className="w-full xs:w-fit xs:px-6"
           render={<Link to="/dogs">Meet Our Puppies</Link>}
         />
+        <Button
+          variant="outline"
+          size="lg"
+          className="w-full xs:w-fit xs:px-5"
+          render={<Link to="/about">Our Story</Link>}
+        />
       </div>
       <div className="w-full mt-4 rounded-2xl overflow-hidden shadow-xl">
         <img

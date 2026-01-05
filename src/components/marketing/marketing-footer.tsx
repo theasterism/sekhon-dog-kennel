@@ -4,6 +4,7 @@ import { siteConfig } from "@/config/site";
 const footerLinks = [
   { href: "/", label: "Home", isRoute: true },
   { href: "/dogs", label: "Available Dogs", isRoute: true },
+  { href: "/about", label: "About Us", isRoute: true },
 ] as const;
 
 export function MarketingFooter() {
