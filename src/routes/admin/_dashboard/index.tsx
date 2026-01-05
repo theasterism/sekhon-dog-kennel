@@ -367,7 +367,7 @@ function StatusBadge({ status, published }: { status: string | null; published: 
     case "reserved":
       return <Badge variant="secondary">Reserved</Badge>;
     case "sold":
-      return <Badge variant="">Sold</Badge>;
+      return <Badge variant="outline">Sold</Badge>;
     default:
       return <Badge variant="outline">{status}</Badge>;
   }
