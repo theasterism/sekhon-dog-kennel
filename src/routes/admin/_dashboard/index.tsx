@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { type ColumnDef } from "@tanstack/react-table";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { type ColumnDef } from "@tanstack/react-table";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -38,7 +38,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { broadcastInvalidate } from "@/lib/broadcast";
 import type { RouterOutputs } from "@/server/api/root";
@@ -196,6 +196,25 @@ function RouteComponent() {
     },
   ];
 
+  const items = [
+    {
+      label: "Select Status",
+      value: null,
+    },
+    {
+      label: "Available",
+      value: "available",
+    },
+    {
+      label: "Reserved",
+      value: "reserved",
+    },
+    {
+      label: "Sold",
+      value: "sold",
+    },
+  ];
+
   return (
     <div className="flex max-w-7xl flex-col gap-8 mx-auto px-5 w-full pb-10">
       {/* Header */}
@@ -258,15 +277,19 @@ function RouteComponent() {
             Search
           </Button>
         </form>
-        <Select value={status ?? "all"} onValueChange={handleStatusChange}>
+
+        <Select value={status} onValueChange={handleStatusChange}>
           <SelectTrigger className="w-full sm:w-40">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="available">Available</SelectItem>
-            <SelectItem value="reserved">Reserved</SelectItem>
-            <SelectItem value="sold">Sold</SelectItem>
+            <SelectGroup>
+              {items.map(({ value, label }) => (
+                <SelectItem key={label} value={value}>
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
           </SelectContent>
         </Select>
       </div>
@@ -340,11 +363,11 @@ function StatusBadge({ status, published }: { status: string | null; published: 
 
   switch (status) {
     case "available":
-      return <Badge className="bg-green-500/10 text-green-600 dark:text-green-400">Available</Badge>;
+      return <Badge variant="default">Available</Badge>;
     case "reserved":
-      return <Badge className="bg-amber-500/10 text-amber-600 dark:text-amber-400">Reserved</Badge>;
+      return <Badge variant="secondary">Reserved</Badge>;
     case "sold":
-      return <Badge variant="secondary">Sold</Badge>;
+      return <Badge variant="">Sold</Badge>;
     default:
       return <Badge variant="outline">{status}</Badge>;
   }

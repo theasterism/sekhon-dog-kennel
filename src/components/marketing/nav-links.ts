@@ -10,10 +10,6 @@ export const navLinks = [
     label: "Available Dogs",
   },
   {
-    to: "/about",
-    label: "About",
-  },
-  {
     to: "/contact",
     label: "Contact",
   },

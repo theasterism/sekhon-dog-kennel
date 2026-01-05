@@ -2,7 +2,7 @@
 
 import { Select as SelectPrimitive } from "@base-ui/react/select";
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
-import type * as React from "react";
+import * as React from "react";
 import { cn } from "@/utils/cn";
 
 const Select = SelectPrimitive.Root;
@@ -48,7 +48,7 @@ function SelectContent({
   sideOffset = 4,
   align = "center",
   alignOffset = 0,
-  alignItemWithTrigger = true,
+  alignItemWithTrigger = false,
   ...props
 }: SelectPrimitive.Popup.Props &
   Pick<SelectPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset" | "alignItemWithTrigger">) {

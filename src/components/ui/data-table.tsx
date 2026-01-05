@@ -1,4 +1,4 @@
-import { type ColumnDef, flexRender, getCoreRowModel, useReactTable, type TableOptions } from "@tanstack/react-table";
+import { type ColumnDef, flexRender, getCoreRowModel, type TableOptions, useReactTable } from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface DataTableProps<TData, TValue> {
@@ -22,7 +22,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="rounded-xl border overflow-hidden">
+    <div className="overflow-hidden rounded-md border">
       <Table>
         <TableHeader className="bg-muted/50">
           {table.getHeaderGroups().map((headerGroup) => (
