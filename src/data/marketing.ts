@@ -4,7 +4,7 @@ export type Testimonial = {
   quote: string;
 };
 
-export const testimonials: Testimonial[] = [
+export const testimonials: Array<Testimonial> = [
   {
     name: "Sarah M.",
     location: "Vancouver, BC",
