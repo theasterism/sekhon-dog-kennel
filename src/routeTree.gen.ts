@@ -16,7 +16,6 @@ import { Route as AdminSetupRouteImport } from './routes/admin/setup'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as MarketingContactRouteImport } from './routes/_marketing/contact'
 import { Route as MarketingApplicationRouteImport } from './routes/_marketing/application'
-import { Route as MarketingAboutRouteImport } from './routes/_marketing/about'
 import { Route as AdminDashboardRouteRouteImport } from './routes/admin/_dashboard/route'
 import { Route as AdminDashboardIndexRouteImport } from './routes/admin/_dashboard/index'
 import { Route as MarketingDogsIndexRouteImport } from './routes/_marketing/dogs/index'
@@ -65,11 +64,6 @@ const MarketingContactRoute = MarketingContactRouteImport.update({
 const MarketingApplicationRoute = MarketingApplicationRouteImport.update({
   id: '/application',
   path: '/application',
-  getParentRoute: () => MarketingRouteRoute,
-} as any)
-const MarketingAboutRoute = MarketingAboutRouteImport.update({
-  id: '/about',
-  path: '/about',
   getParentRoute: () => MarketingRouteRoute,
 } as any)
 const AdminDashboardRouteRoute = AdminDashboardRouteRouteImport.update({
@@ -153,7 +147,6 @@ const AdminDashboardDogsDogIdEditRoute =
 
 export interface FileRoutesByFullPath {
   '/admin': typeof AdminDashboardRouteRouteWithChildren
-  '/about': typeof MarketingAboutRoute
   '/application': typeof MarketingApplicationRoute
   '/contact': typeof MarketingContactRoute
   '/admin/login': typeof AdminLoginRoute
@@ -176,7 +169,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/admin': typeof AdminDashboardIndexRoute
-  '/about': typeof MarketingAboutRoute
   '/application': typeof MarketingApplicationRoute
   '/contact': typeof MarketingContactRoute
   '/admin/login': typeof AdminLoginRoute
@@ -200,7 +192,6 @@ export interface FileRoutesById {
   '/_marketing': typeof MarketingRouteRouteWithChildren
   '/admin': typeof AdminRouteRouteWithChildren
   '/admin/_dashboard': typeof AdminDashboardRouteRouteWithChildren
-  '/_marketing/about': typeof MarketingAboutRoute
   '/_marketing/application': typeof MarketingApplicationRoute
   '/_marketing/contact': typeof MarketingContactRoute
   '/admin/login': typeof AdminLoginRoute
@@ -225,7 +216,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/admin'
-    | '/about'
     | '/application'
     | '/contact'
     | '/admin/login'
@@ -248,7 +238,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/admin'
-    | '/about'
     | '/application'
     | '/contact'
     | '/admin/login'
@@ -271,7 +260,6 @@ export interface FileRouteTypes {
     | '/_marketing'
     | '/admin'
     | '/admin/_dashboard'
-    | '/_marketing/about'
     | '/_marketing/application'
     | '/_marketing/contact'
     | '/admin/login'
@@ -352,13 +340,6 @@ declare module '@tanstack/react-router' {
       path: '/application'
       fullPath: '/application'
       preLoaderRoute: typeof MarketingApplicationRouteImport
-      parentRoute: typeof MarketingRouteRoute
-    }
-    '/_marketing/about': {
-      id: '/_marketing/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof MarketingAboutRouteImport
       parentRoute: typeof MarketingRouteRoute
     }
     '/admin/_dashboard': {
@@ -470,7 +451,6 @@ declare module '@tanstack/react-router' {
 }
 
 interface MarketingRouteRouteChildren {
-  MarketingAboutRoute: typeof MarketingAboutRoute
   MarketingApplicationRoute: typeof MarketingApplicationRoute
   MarketingContactRoute: typeof MarketingContactRoute
   MarketingIndexRoute: typeof MarketingIndexRoute
@@ -479,7 +459,6 @@ interface MarketingRouteRouteChildren {
 }
 
 const MarketingRouteRouteChildren: MarketingRouteRouteChildren = {
-  MarketingAboutRoute: MarketingAboutRoute,
   MarketingApplicationRoute: MarketingApplicationRoute,
   MarketingContactRoute: MarketingContactRoute,
   MarketingIndexRoute: MarketingIndexRoute,
