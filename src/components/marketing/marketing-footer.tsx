@@ -43,6 +43,13 @@ export function MarketingFooter() {
             {/* Copyright */}
             <p className="text-sm text-muted-foreground">
               &copy; {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
+              <Link
+                to="/admin"
+                className="opacity-20 hover:opacity-100 transition-opacity duration-500 ml-1"
+                title="Admin"
+              >
+                🐾
+              </Link>
             </p>
           </div>
 
