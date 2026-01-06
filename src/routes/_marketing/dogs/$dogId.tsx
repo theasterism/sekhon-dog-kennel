@@ -95,7 +95,7 @@ function RouteComponent() {
 
         <div className="flex flex-col gap-4">
           {sortedImages[0] && (
-            <div className="w-full aspect-3/4 rounded-lg overflow-hidden shadow-lg">
+            <div className="w-full aspect-3/4 max-w-[400px] rounded-lg overflow-hidden shadow-lg">
               <img src={`/api/images/${sortedImages[0].r2Key}`} alt={dog.name} className="size-full object-cover" />
             </div>
           )}
