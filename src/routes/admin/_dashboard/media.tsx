@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
 import { ChevronRightIcon, FolderIcon, GridIcon, HomeIcon, ListIcon, Trash2Icon } from "lucide-react";
@@ -60,7 +60,7 @@ function MediaPage() {
 
   const currentPath = path || "";
   const currentView = view || "grid";
-  const mediaQuery = useQuery(api.media.list.queryOptions({ prefix: currentPath, limit: 500 }));
+  const mediaQuery = useSuspenseQuery(api.media.list.queryOptions({ prefix: currentPath, limit: 500 }));
   const items = mediaQuery.data?.items ?? [];
 
   // Parse items into folders and files

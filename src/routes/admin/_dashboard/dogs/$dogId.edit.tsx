@@ -1,5 +1,5 @@
 import { revalidateLogic, useForm } from "@tanstack/react-form";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { format } from "date-fns";
 import {
@@ -75,7 +75,7 @@ function RouteComponent() {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const dogQuery = useQuery(api.dogs.admin.getById.queryOptions({ id: dogId }));
+  const dogQuery = useSuspenseQuery(api.dogs.admin.getById.queryOptions({ id: dogId }));
   const dog = dogQuery.data;
 
   const updateMutation = useMutation({

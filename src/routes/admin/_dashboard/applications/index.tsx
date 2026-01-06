@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
 import { CheckCircleIcon, ClockIcon, MailIcon, PhoneIcon, XCircleIcon } from "lucide-react";
@@ -7,7 +7,6 @@ import * as z from "zod";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { RouterOutputs } from "@/server/api/root";
 
@@ -47,8 +46,8 @@ function ApplicationsPage() {
   const { status } = Route.useSearch();
   const navigate = Route.useNavigate();
 
-  const applicationsQuery = useQuery(api.applications.list.queryOptions({ status }));
-  const applications = applicationsQuery.data ?? [];
+  const applicationsQuery = useSuspenseQuery(api.applications.list.queryOptions({ status }));
+  const applications = applicationsQuery.data;
 
   const updateStatusMutation = useMutation({
     ...api.applications.updateStatus.mutationOptions(),
@@ -94,11 +93,7 @@ function ApplicationsPage() {
       </div>
 
       {/* Applications List */}
-      {applicationsQuery.isLoading ? (
-        <div className="flex justify-center py-12">
-          <Spinner className="size-8" />
-        </div>
-      ) : applications.length === 0 ? (
+      {applications.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
             {status ? `No ${status} applications` : "No applications yet"}
