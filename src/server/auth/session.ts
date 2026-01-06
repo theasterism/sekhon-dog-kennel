@@ -10,15 +10,6 @@ export const SESSION_COOKIE_NAME = "__session";
 
 const SESSION_EXPIRES_IN = 60 * 60 * 24 * 30; // Default to 30 days
 
-const SESSION_CACHE_TTL = 5 * 60 * 1000; // 5 minutes cache
-
-interface CachedSession {
-  session: { id: string; expiresAt: Date } | null;
-  timestamp: number;
-}
-
-const sessionCache = new Map<string, CachedSession>();
-
 export async function createSession(userId: number) {
   const now = new Date();
 
@@ -56,19 +47,6 @@ export async function getCurrentSession() {
 
   const sessionIdHash = await computeShaHash("SHA-256", sessionId);
 
-  const cached = sessionCache.get(sessionIdHash);
-  if (cached && Date.now() - cached.timestamp < SESSION_CACHE_TTL) {
-    if (!cached.session) return null;
-
-    if (Date.now() >= cached.session.expiresAt.getTime()) {
-      sessionCache.delete(sessionIdHash);
-      await deleteSession(sessionId);
-      return null;
-    }
-
-    return cached.session;
-  }
-
   const [session] = await db
     .select({
       id: SessionTable.id,
@@ -78,17 +56,13 @@ export async function getCurrentSession() {
     .where(eq(SessionTable.id, sessionIdHash));
 
   if (!session) {
-    sessionCache.set(sessionIdHash, { session: null, timestamp: Date.now() });
     return null;
   }
 
   if (Date.now() >= session.expiresAt.getTime()) {
-    sessionCache.delete(sessionIdHash);
-    await deleteSession(sessionIdHash);
+    await deleteSession(session.id);
     return null;
   }
-
-  sessionCache.set(sessionIdHash, { session, timestamp: Date.now() });
 
   // Refresh session if more than halfway through its lifetime
   const halfwayPoint = session.expiresAt.getTime() - (SESSION_EXPIRES_IN * 1000) / 2;
@@ -97,7 +71,6 @@ export async function getCurrentSession() {
       const newExpiresAt = new Date(Date.now() + SESSION_EXPIRES_IN * 1000);
       await db.update(SessionTable).set({ expiresAt: newExpiresAt }).where(eq(SessionTable.id, session.id));
       setSessionCookie(sessionId);
-      sessionCache.set(sessionIdHash, { session: { ...session, expiresAt: newExpiresAt }, timestamp: Date.now() });
     } catch {
       // Silently fail - session is still valid, just not refreshed
     }
@@ -108,7 +81,6 @@ export async function getCurrentSession() {
 
 export async function deleteSession(rawSessionId: string) {
   const sessionIdHash = await computeShaHash("SHA-256", rawSessionId);
-  sessionCache.delete(sessionIdHash);
   await db.delete(SessionTable).where(eq(SessionTable.id, sessionIdHash));
 }
 
