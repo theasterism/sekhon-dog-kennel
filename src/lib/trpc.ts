@@ -1,7 +1,3 @@
-import type { AppRouter } from "@/server/api/root";
-import { appRouter } from "@/server/api/root";
-import { createContext } from "@/server/api/trpc";
-import { QueryCache, QueryClient } from "@tanstack/react-query";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { getRequestHeaders } from "@tanstack/react-start/server";
 import {
@@ -13,8 +9,10 @@ import {
   splitLink,
   unstable_localLink,
 } from "@trpc/client";
-import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import superjson from "superjson";
+import type { AppRouter } from "@/server/api/root";
+import { appRouter } from "@/server/api/root";
+import { createContext } from "@/server/api/trpc";
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return window.location.origin;
@@ -67,24 +65,3 @@ export const makeTRPCClient = createIsomorphicFn()
       ],
     });
   });
-
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: false,
-      staleTime: 60 * 1000,
-      gcTime: 5 * 60 * 1000,
-    },
-    dehydrate: { serializeData: superjson.serialize },
-    hydrate: { deserializeData: superjson.deserialize },
-  },
-  queryCache: new QueryCache(),
-});
-
-const trpcClient = makeTRPCClient();
-
-export const api = createTRPCOptionsProxy<AppRouter>({
-  client: trpcClient,
-  queryClient,
-});
