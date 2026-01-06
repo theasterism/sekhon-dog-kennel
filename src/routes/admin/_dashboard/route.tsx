@@ -1,10 +1,18 @@
-import { createFileRoute, Link, linkOptions, Outlet, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link, linkOptions, Outlet, redirect, useRouter } from "@tanstack/react-router";
 import { LogOutIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/utils/cn";
 
 export const Route = createFileRoute("/admin/_dashboard")({
+  beforeLoad: ({ context }) => {
+    if (!context.isSetupComplete) {
+      throw redirect({ to: "/admin/setup" });
+    }
+    if (!context.session.isAuthenticated) {
+      throw redirect({ to: "/admin/login" });
+    }
+  },
   component: RouteComponent,
 });
 
