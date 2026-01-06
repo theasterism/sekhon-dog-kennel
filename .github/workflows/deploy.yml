@@ -49,7 +49,7 @@ jobs:
   deploy-prod:
     runs-on: ubuntu-latest
     name: Deploy to Production
-    if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment.value == 'prod'
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'prod'
 
     steps:
       - name: Checkout
