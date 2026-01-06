@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ContactForm } from "@/components/marketing/contact-form";
+// import { ContactForm } from "@/components/marketing/contact-form";
 import { ContactInfo } from "@/components/marketing/contact-info";
 import { MapEmbed } from "@/components/marketing/map-embed";
 import { Separator } from "@/components/ui/separator";
@@ -21,8 +21,8 @@ function RouteComponent() {
         </div>
         <Separator />
         <ContactInfo />
-        <Separator />
-        <ContactForm />
+        {/* <Separator /> */}
+        {/* <ContactForm /> */}
       </div>
       <MapEmbed />
     </main>
