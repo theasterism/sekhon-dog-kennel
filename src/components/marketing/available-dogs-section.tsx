@@ -1,19 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { Link, useRouteContext } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
-import { api } from "@/lib/trpc";
-import type { RouterOutputs } from "@/server/api/root";
 import { getAge } from "@/utils/age";
 import { cn } from "@/utils/cn";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 
-type Dog = RouterOutputs["dogs"]["public"]["list"][number];
-
 export function AvailableDogsSection() {
-  const dogsQuery = useQuery(api.dogs.public.list.queryOptions());
-  const dogs = (dogsQuery.data ?? []) as Dog[];
+  const { api } = useRouteContext({ from: "/_marketing/" });
+  const dogsQuery = useSuspenseQuery(api.dogs.public.list.queryOptions());
+  const dogs = dogsQuery.data;
 
   const statusConfig = {
     available: { label: "Available", color: "bg-green-500/10 text-green-600 border-green-500/20" },
@@ -25,11 +21,7 @@ export function AvailableDogsSection() {
     <section id="available-dogs" className="max-w-7xl mx-auto px-5 scroll-mt-24">
       <h2 className="text-3xl font-semibold text-center mb-10">Available Dogs</h2>
 
-      {dogsQuery.isLoading ? (
-        <div className="flex justify-center py-12">
-          <Spinner className="size-8" />
-        </div>
-      ) : dogs.length === 0 ? (
+      {dogs.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
           <p>No dogs available at the moment. Check back soon!</p>
         </div>

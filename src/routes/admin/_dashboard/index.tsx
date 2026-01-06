@@ -59,12 +59,10 @@ export const Route = createFileRoute("/admin/_dashboard/")({
   loader: async ({ context, deps }) => {
     const { api, queryClient } = context;
 
-    await Promise.all([
-      queryClient.ensureQueryData(api.stats.queryOptions()),
-      queryClient.ensureQueryData(
-        api.dogs.admin.list.queryOptions({ page: deps.page, limit: 10, search: deps.query, status: deps.status }),
-      ),
-    ]);
+    await queryClient.ensureQueryData(api.stats.queryOptions());
+    await queryClient.ensureQueryData(
+      api.dogs.admin.list.queryOptions({ page: deps.page, limit: 10, search: deps.query, status: deps.status }),
+    );
   },
   component: RouteComponent,
 });
