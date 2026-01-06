@@ -212,6 +212,8 @@ function ImageGallery({ dogId, images }: { dogId: string; images: DogData["image
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const maxImages = 3;
+  const isAtMax = images.length >= maxImages;
 
   const uploadMutation = useMutation({
     ...api.dogs.admin.uploadImage.mutationOptions(),
@@ -319,11 +321,11 @@ function ImageGallery({ dogId, images }: { dogId: string; images: DogData["image
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            disabled={uploading}
-            className="aspect-square rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-muted-foreground/50 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-foreground"
+            disabled={uploading || isAtMax}
+            className="aspect-square rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-muted-foreground/50 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {uploading ? <Spinner className="size-6" /> : <ImagePlusIcon className="size-6" />}
-            <span className="text-xs">Add Image</span>
+            <span className="text-xs">{isAtMax ? "Max images reached" : "Add Image"}</span>
           </button>
           <input
             ref={fileInputRef}

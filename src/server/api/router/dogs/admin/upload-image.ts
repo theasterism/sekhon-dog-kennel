@@ -15,6 +15,7 @@ const IMAGE_SIZES = {
 } as const;
 
 const IMAGE_QUALITY = 85;
+const MAX_IMAGES_PER_DOG = 3;
 
 async function optimizeAndStore(
   images: ImagesBinding,
@@ -61,6 +62,18 @@ export const uploadImage = protectedProcedure.input(z.instanceof(FormData)).muta
 
   if (!dog) {
     throw { code: "NOT_FOUND" as const, message: "Dog not found" };
+  }
+
+  const existingImages = await db
+    .select({ id: DogImageTable.id })
+    .from(DogImageTable)
+    .where(eq(DogImageTable.dogId, dogId));
+
+  if (existingImages.length >= MAX_IMAGES_PER_DOG) {
+    throw {
+      code: "VALIDATION_ERROR" as const,
+      message: `Maximum ${MAX_IMAGES_PER_DOG} images allowed per dog`,
+    };
   }
 
   if (!ALLOWED_TYPES.includes(file.type)) {
