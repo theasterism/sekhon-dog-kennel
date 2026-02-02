@@ -145,13 +145,13 @@ const AdminDashboardDogsDogIdEditRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof MarketingIndexRoute
   '/admin': typeof AdminDashboardRouteRouteWithChildren
   '/about': typeof MarketingAboutRoute
   '/application': typeof MarketingApplicationRoute
   '/contact': typeof MarketingContactRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/setup': typeof AdminSetupRoute
-  '/': typeof MarketingIndexRoute
   '/admin/applications': typeof AdminDashboardApplicationsRouteRouteWithChildren
   '/dogs/$dogId': typeof MarketingDogsDogIdRoute
   '/admin/media': typeof AdminDashboardMediaRoute
@@ -160,7 +160,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/setup': typeof ApiAuthSetupRoute
   '/api/images/$': typeof ApiImagesSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
-  '/dogs': typeof MarketingDogsIndexRoute
+  '/dogs/': typeof MarketingDogsIndexRoute
   '/admin/': typeof AdminDashboardIndexRoute
   '/admin/dogs/new': typeof AdminDashboardDogsNewRoute
   '/admin/applications/': typeof AdminDashboardApplicationsIndexRoute
@@ -214,13 +214,13 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/'
     | '/admin'
     | '/about'
     | '/application'
     | '/contact'
     | '/admin/login'
     | '/admin/setup'
-    | '/'
     | '/admin/applications'
     | '/dogs/$dogId'
     | '/admin/media'
@@ -229,7 +229,7 @@ export interface FileRouteTypes {
     | '/api/auth/setup'
     | '/api/images/$'
     | '/api/rpc/$'
-    | '/dogs'
+    | '/dogs/'
     | '/admin/'
     | '/admin/dogs/new'
     | '/admin/applications/'
@@ -302,7 +302,7 @@ declare module '@tanstack/react-router' {
     '/_marketing': {
       id: '/_marketing'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof MarketingRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -365,7 +365,7 @@ declare module '@tanstack/react-router' {
     '/_marketing/dogs/': {
       id: '/_marketing/dogs/'
       path: '/dogs'
-      fullPath: '/dogs'
+      fullPath: '/dogs/'
       preLoaderRoute: typeof MarketingDogsIndexRouteImport
       parentRoute: typeof MarketingRouteRoute
     }

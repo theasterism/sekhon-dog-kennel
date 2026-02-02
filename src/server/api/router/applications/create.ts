@@ -11,7 +11,7 @@ import { Result } from "@/utils/result";
 const CreateApplicationSchema = z.object({
   dogId: z.string(),
   applicantName: z.string().min(1, "Name is required"),
-  email: z.string().email("Valid email is required"),
+  email: z.email("Valid email is required"),
   phone: z.string().min(1, "Phone is required"),
   address: z.string().optional(),
 });
