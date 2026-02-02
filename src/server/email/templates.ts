@@ -164,3 +164,46 @@ export function applicationConfirmationEmail(data: { applicantName: string; dogN
     `.trim(),
   };
 }
+
+export function applicationApprovedEmail(data: { applicantName: string; dogName: string }): {
+  subject: string;
+  html: string;
+} {
+  return {
+    subject: `Great News! Your Application for ${data.dogName} Has Been Approved`,
+    html: `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5;">
+  <div style="max-width: 600px; margin: 0 auto; background-color: white; border-radius: 8px; padding: 32px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <h1 style="color: #166534; margin-top: 0;">Congratulations!</h1>
+    <p style="color: #666; font-size: 16px;">Dear ${data.applicantName},</p>
+    <p style="color: #666; font-size: 16px;">
+      We're thrilled to let you know that your adoption application for <strong>${data.dogName}</strong> has been approved!
+    </p>
+    
+    <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 16px; margin: 24px 0;">
+      <p style="color: #166534; margin: 0; font-size: 14px;">
+        <strong>Next Steps</strong><br>
+        We will be in touch shortly to arrange the details for bringing ${data.dogName} home. Please keep an eye on your email and phone for our follow-up communication.
+      </p>
+    </div>
+    
+    <p style="color: #666; font-size: 16px;">
+      Thank you for choosing to adopt from Sekhon Dog Kennel. We're so happy that ${data.dogName} will be joining your family!
+    </p>
+    
+    <p style="color: #666; font-size: 16px; margin-bottom: 0;">
+      Warm regards,<br>
+      <strong>Sekhon Dog Kennel</strong>
+    </p>
+  </div>
+</body>
+</html>
+    `.trim(),
+  };
+}

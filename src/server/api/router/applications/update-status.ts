@@ -1,7 +1,9 @@
 import { eq } from "drizzle-orm";
 import * as z from "zod";
 import { protectedProcedure } from "@/server/api/trpc";
-import { ApplicationTable } from "@/server/db/schema";
+import { ApplicationTable, DogTable } from "@/server/db/schema";
+import { sendEmail } from "@/server/email/send";
+import { applicationApprovedEmail } from "@/server/email/templates";
 import { Result } from "@/utils/result";
 
 export const updateStatus = protectedProcedure
@@ -11,7 +13,12 @@ export const updateStatus = protectedProcedure
     const { id, status } = input;
 
     const [existing] = await db
-      .select({ id: ApplicationTable.id })
+      .select({
+        id: ApplicationTable.id,
+        email: ApplicationTable.email,
+        applicantName: ApplicationTable.applicantName,
+        dogId: ApplicationTable.dogId,
+      })
       .from(ApplicationTable)
       .where(eq(ApplicationTable.id, id));
 
@@ -33,6 +40,22 @@ export const updateStatus = protectedProcedure
     );
 
     if (result.isErr()) throw result.error;
+
+    if (status === "approved" && existing.email) {
+      const [dog] = await db.select({ name: DogTable.name }).from(DogTable).where(eq(DogTable.id, existing.dogId));
+
+      const dogName = dog?.name ?? "your selected dog";
+      const email = applicationApprovedEmail({
+        applicantName: existing.applicantName,
+        dogName,
+      });
+
+      await sendEmail({
+        to: existing.email,
+        subject: email.subject,
+        html: email.html,
+      });
+    }
 
     return result.value;
   });
